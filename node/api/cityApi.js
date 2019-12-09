@@ -4,11 +4,13 @@ const Game_account = require('../model/Game_account1');
 const Game_user = require('../model/Game_user');
 const Game_line = require('../model/Game_line');
 const Game_trsnsporter = require('../model/Game_trsnsporter');
+const Game_resource = require('../model/Game_resource');
+
 const util = require('../util/util');
 
 
 // 获取用户账号信息
-router.get('/getAccount', async(ctx, next) => {
+router.get('/getAccount', async (ctx, next) => {
     await next();
     // 查询数据
     let targetAccount = await Game_account.findOne({
@@ -26,7 +28,7 @@ router.get('/getAccount', async(ctx, next) => {
 });
 
 // 获取用户信息
-router.get('/getUserInfo', async(ctx, next) => {
+router.get('/getUserInfo', async (ctx, next) => {
     await next();
     // 查询数据
     let targetUser = await Game_user.findAll({
@@ -54,7 +56,7 @@ router.get('/getUserInfo', async(ctx, next) => {
             liangshirate: 1,
             woodsrate: 1,
             currentbattlelevel: 1,
-            editnamecard:1
+            editnamecard: 1
         };
         await Game_user.create(params);
     } else {
@@ -70,7 +72,7 @@ router.get('/getUserInfo', async(ctx, next) => {
 });
 
 // 更新资源信息
-router.post('/updateResource', async(ctx, next) => {
+router.post('/updateResource', async (ctx, next) => {
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -105,7 +107,7 @@ router.post('/updateResource', async(ctx, next) => {
 });
 
 // 更新仙缘信息
-router.post('/updateGemstone', async(ctx, next) => {
+router.post('/updateGemstone', async (ctx, next) => {
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -122,6 +124,60 @@ router.post('/updateGemstone', async(ctx, next) => {
         message: '成功'
     };
 
+});
+// 获取资源田信息
+router.get('/getResourceInfo', async (ctx, next) => {
+    await next();
+    // 查询数据
+    let targetResourceList = await Game_resource.findAll({
+        where: {
+            belongs: ctx.query.account,
+        }
+    });
+
+    ctx.response.body = {
+        code: 200,
+        message: '成功',
+        data: targetResourceList
+    };
+
+});
+
+// 升级资源田信息
+
+
+router.post('/upResourceLevel', async (ctx, next) => {
+    await next();
+    // 查询数据
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: ctx.request.body.account
+        }
+    });
+
+    let targetResource = await Game_resource.findOne({
+        where: {
+            id: ctx.request.body.id
+        }
+    });
+
+
+    if (targetResource.level * 1000 > +targetUser.woods) {
+        ctx.response.body = {
+            code: 500,
+            message: '木材资源不足'
+        };
+    } else {
+        targetResource.level = +targetResource.level + 1;
+        targetUser.woods = (+targetUser.woods) - 1000 * targetResource.level;
+        targetUser[ctx.request.body.type + 'rate'] = targetResource.level;
+        await targetUser.save();
+        await targetResource.save();
+        ctx.response.body = {
+            code: 200,
+            message: '成功'
+        };
+    }
 });
 
 module.exports = router;

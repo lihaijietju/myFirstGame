@@ -8,7 +8,7 @@ const Game_battlewar = require('../model/Game_battlewar');
 
 
 // 修改名字
-router.post('/changeName', async(ctx, next) => {
+router.post('/changeName', async (ctx, next) => {
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -32,7 +32,31 @@ router.post('/changeName', async(ctx, next) => {
     }
 });
 
-router.post('/getXianyuan', async(ctx, next) => {
+router.post('/getResource', async (ctx, next) => {
+    await next();
+    // 查询数据
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: ctx.request.body.account,
+        }
+    });
+    if (targetUser[ctx.request.body.type + 'bag'] <= 0) {
+        ctx.response.body = {
+            code: 400,
+            message: '资源包不足'
+        };
+    } else {
+        targetUser[ctx.request.body.type + 'bag'] = +targetUser[ctx.request.body.type + 'bag'] - 1;
+        targetUser[ctx.request.body.type] = +targetUser[ctx.request.body.type] + 1000;
+        await targetUser.save();
+        ctx.response.body = {
+            code: 200,
+            message: '成功'
+        };
+    }
+});
+
+router.post('/getXianyuan', async (ctx, next) => {
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -56,7 +80,7 @@ router.post('/getXianyuan', async(ctx, next) => {
     }
 });
 
-router.post('/getUpClassStone', async(ctx, next) => {
+router.post('/getUpClassStone', async (ctx, next) => {
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -80,7 +104,7 @@ router.post('/getUpClassStone', async(ctx, next) => {
     }
 });
 
-router.post('/getUpStrongStone', async(ctx, next) => {
+router.post('/getUpStrongStone', async (ctx, next) => {
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
