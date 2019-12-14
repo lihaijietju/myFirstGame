@@ -206,19 +206,26 @@ router.post('/battleUplevel', async (ctx, next) => {
         }
     });
 
-    targetUser.tiekuang = targetUser.tiekuang - ctx.request.body.resourceAmount;
-    targetUser.liangshi = targetUser.liangshi - ctx.request.body.resourceAmount;
-    targetUser.caoyao = targetUser.caoyao - ctx.request.body.resourceAmount;
-    targetUser.woods = targetUser.woods - ctx.request.body.resourceAmount;
-    targetBattle.level = +targetBattle.level + 1;
+    if (+targetUser.tiekuang >= +ctx.request.body.resourceAmount && +targetUser.liangshi >= +ctx.request.body.resourceAmount && +targetUser.caoyao >= +ctx.request.body.resourceAmount && +targetUser.woods >= +ctx.request.body.resourceAmount) {
+        targetUser.tiekuang = targetUser.tiekuang - ctx.request.body.resourceAmount;
+        targetUser.liangshi = targetUser.liangshi - ctx.request.body.resourceAmount;
+        targetUser.caoyao = targetUser.caoyao - ctx.request.body.resourceAmount;
+        targetUser.woods = targetUser.woods - ctx.request.body.resourceAmount;
 
-    await targetBattle.save();
-    await targetUser.save();
+        targetBattle.level = +targetBattle.level + 1;
+        await targetBattle.save();
+        await targetUser.save();
 
-    ctx.response.body = {
-        code: 200,
-        message: '成功'
-    };
+        ctx.response.body = {
+            code: 200,
+            message: '成功'
+        };
+    } else {
+        ctx.response.body = {
+            code: 400,
+            message: '失败'
+        };
+    }
 });
 
 // 升阶战斗队

@@ -83,19 +83,31 @@ router.post('/transportUplevel', async (ctx, next) => {
             account: ctx.request.body.account
         }
     });
-    targetUser.tiekuang = targetUser.tiekuang - ctx.request.body.resourceAmount;
-    targetUser.liangshi = targetUser.liangshi - ctx.request.body.resourceAmount;
-    targetUser.caoyao = targetUser.caoyao - ctx.request.body.resourceAmount;
-    targetUser.woods = targetUser.woods - ctx.request.body.resourceAmount;
+    if (+targetUser.tiekuang >= +ctx.request.body.resourceAmount && +targetUser.liangshi >= +ctx.request.body.resourceAmount && +targetUser.caoyao >= +ctx.request.body.resourceAmount && +targetUser.woods >= +ctx.request.body.resourceAmount) {
+        targetUser.tiekuang = targetUser.tiekuang - ctx.request.body.resourceAmount;
+        targetUser.liangshi = targetUser.liangshi - ctx.request.body.resourceAmount;
+        targetUser.caoyao = targetUser.caoyao - ctx.request.body.resourceAmount;
+        targetUser.woods = targetUser.woods - ctx.request.body.resourceAmount;
 
-    targetTransport.level = +targetTransport.level + 1;
-    await targetTransport.save();
-    await targetUser.save();
+        targetTransport.level = +targetTransport.level + 1;
+        await targetTransport.save();
+        await targetUser.save();
 
-    ctx.response.body = {
-        code: 200,
-        message: '成功'
-    };
+        ctx.response.body = {
+            code: 200,
+            message: '成功'
+        };
+    } else {
+        ctx.response.body = {
+            code: 400,
+            message: '失败'
+        };
+    }
+
+
+
+
+
 });
 
 // 升阶商队
