@@ -58,8 +58,8 @@ router.post('/upLevelEquipment', async (ctx, next) => {
             message: '强化石不足'
         };
     } else {
-        targetEquipment.level = targetEquipment.level + 1;
         targetUser.strongstonenum = +targetUser.strongstonenum - +targetEquipment.level * 10;
+        targetEquipment.level = targetEquipment.level + 1;
         await targetEquipment.save();
         await targetUser.save();
         ctx.response.body = {
