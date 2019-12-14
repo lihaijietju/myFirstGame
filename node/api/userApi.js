@@ -102,6 +102,7 @@ router.post('/upClassEquipment', async (ctx, next) => {
             };
         }
         targetUser.upclassstone = +targetUser.upclassstone - +targetEquipment.class * 100;
+
         targetEquipment.class = +targetEquipment.class + 1;
         await targetEquipment.save();
         await targetUser.save();
@@ -377,7 +378,7 @@ router.post('/buyThingsByMoney', async (ctx, next) => {
     switch (ctx.request.body.type) {
         case '1':
             if (+targetUser.gemstone >= 500) {
-                targetUser.gold = +targetUser.gemstone - 500;
+                targetUser.gemstone = +targetUser.gemstone - 500;
                 targetUser.strongstoneclip = +targetUser.strongstoneclip + 1000;
                 await targetUser.save();
                 ctx.response.body = {
