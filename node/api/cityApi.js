@@ -245,14 +245,24 @@ router.post('/upResourceLevel', async (ctx, next) => {
         }
     });
 
+    let needWoods = 0;
 
-    if (targetResource.level * 1000 > +targetUser.woods) {
+    if (+targetResource.level <= 30) {
+        needWoods = parseInt(Math.pow(1.5, +targetResource.level - 1));
+    } else if (+targetResource.level <= 50) {
+        needWoods = 300000;
+    } else {
+        needWoods = 500000;
+    }
+
+
+    if (10 * needWoods > +targetUser.woods) {
         ctx.response.body = {
             code: 500,
             message: '木材资源不足'
         };
     } else {
-        targetUser.woods = (+targetUser.woods) - 1000 * targetResource.level;
+        targetUser.woods = (+targetUser.woods) - 10 * needWoods;
         targetResource.level = +targetResource.level + 1;
         targetUser[ctx.request.body.type + 'rate'] = targetResource.level;
         await targetUser.save();

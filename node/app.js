@@ -7,6 +7,7 @@ const cors = require('koa2-cors');
 const KoaJson = require('koa-json');
 const config = require('./config');
 const bodyParser = require('koa-bodyparser');
+const schedule = require('node-schedule');
 
 // 路由api引用
 const loginApi = require('./api/loginApi');
@@ -15,6 +16,9 @@ const tradeApi = require('./api/tradeApi');
 const battleApi = require('./api/battleApi');
 const bagApi = require('./api/bagApi');
 const userApi = require('./api/userApi');
+
+const Game_user = require('./model/Game_user');
+const Game_equipment = require('./model/Game_equipment');
 
 // 创建一个Koa对象表示web app本身:
 const app = new Koa();
@@ -57,13 +61,78 @@ app.listen(config.port);
 console.log('app started at port ' + config.port + '...');
 
 
-const Game_trsnsporter = require('./model/Game_trsnsporter');
 
-// updatename();
 
-async function updatename() {
-    let targetTransport = await Game_trsnsporter.findAll({
-        where: {}
+// 定时任务
+const scheduleCronstyle = () => {
+    //每分钟的第30秒定时执行一次:
+    schedule.scheduleJob('30 * * * * *', () => {
+        getUserList();
     });
-    console.log(targetTransport)
+}
+
+scheduleCronstyle();
+
+async function getUserList() {
+    let userList = await Game_user.findAll();
+    for (let i = 0; i < userList.length; i++) {
+        updateBattleValue(userList[i].account);
+    }
+}
+
+async function updateBattleValue(account) {
+    let propertyInfo = {
+        'strength': 0,
+        'tizhi': 0,
+        'gengu': 0,
+        'speed': 0,
+        'baoji': 0
+    }
+
+    let targetEquipment = await Game_equipment.findAll({
+        where: {
+            belongs: account
+        }
+    });
+    // 获取装备属性
+    targetEquipment.forEach((equipment) => {
+        propertyInfo.strength = +propertyInfo.strength + +equipment.strength + +equipment.level + +equipment.class * 10;
+        propertyInfo.tizhi = +propertyInfo.tizhi + +equipment.tizhi + +equipment.level + +equipment.class * 10;
+        propertyInfo.gengu = +propertyInfo.gengu + +equipment.gengu + +equipment.level + +equipment.class * 10;
+        propertyInfo.speed = +propertyInfo.speed + +equipment.speed + +equipment.level + +equipment.class * 10;
+        propertyInfo.baoji = +propertyInfo.baoji + +equipment.baoji + +equipment.level + +equipment.class * 10;
+    });
+
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: account
+        }
+    });
+
+    // 自身属性
+    propertyInfo.strength = +propertyInfo.strength + +targetUser.strength;
+    propertyInfo.tizhi = +propertyInfo.tizhi + +targetUser.tizhi;
+    propertyInfo.gengu = +propertyInfo.gengu + +targetUser.gengu;
+    propertyInfo.speed = +propertyInfo.speed + +targetUser.speed;
+    propertyInfo.baoji = +propertyInfo.baoji + +targetUser.baoji;
+
+    let classLevel = Math.floor(+targetUser.level / 10);
+    let restLevel = +targetUser.level - classLevel * 10;
+
+    let property = 0;
+
+    for (let i = 0; i < classLevel; i++) {
+        property = property + (i + 1) * 10;
+    }
+    property = property + restLevel * 10 * classLevel
+
+    propertyInfo.strength = +propertyInfo.strength + property;
+    propertyInfo.tizhi = +propertyInfo.tizhi + property;
+    propertyInfo.gengu = +propertyInfo.gengu + property;
+    propertyInfo.speed = +propertyInfo.speed + property;
+    propertyInfo.baoji = +propertyInfo.baoji + property;
+
+    let myBattle = propertyInfo.strength * 5 + propertyInfo.gengu * 5 + propertyInfo.tizhi * 10 + propertyInfo.speed * 2 + propertyInfo.baoji * 2;
+    targetUser.battle = myBattle;
+    await targetUser.save();
 }
