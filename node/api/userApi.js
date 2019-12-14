@@ -483,7 +483,7 @@ router.post('/buyThingsByMoney', async (ctx, next) => {
             if (+targetUser.gemstone >= 88) {
 
                 targetUser.gemstone = +targetUser.gemstone - 88;
-                targetUser.gold = +targetUser.gold + 1;
+                targetUser.gold = +targetUser.gold + 1000;
                 await targetUser.save();
                 ctx.response.body = {
                     code: 200,
