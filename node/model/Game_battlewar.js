@@ -16,6 +16,10 @@ let Game_battlewar = sequelize.define('game_battlewar', {
     starttime: Sequelize.STRING(20),
     totaltime: Sequelize.INTEGER,
     isbuiedmoney: Sequelize.INTEGER,
+    id: {
+        type: Sequelize.STRING(50),
+        primaryKey: true
+    }
 }, {
     timestamps: false
 });

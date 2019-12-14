@@ -8,7 +8,11 @@ const sequelize = util.getSqlConnection();
 let Game_account = sequelize.define('game_account', {
     account: Sequelize.STRING(40),
     password: Sequelize.STRING(40),
-    updatetime: Sequelize.STRING(20)
+    updatetime: Sequelize.STRING(40),
+    id: {
+        type: Sequelize.STRING(50),
+        primaryKey: true
+    }
 }, {
     timestamps: false
 });

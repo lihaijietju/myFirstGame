@@ -78,6 +78,7 @@ router.post('/addNewBattleWar', async (ctx, next) => {
         await targetUser.save();
 
         await Game_battlewar.create({
+            id: +new Date(),
             belongsto: ctx.request.body.account,
             name: '新战队',
             level: 1,
@@ -89,25 +90,47 @@ router.post('/addNewBattleWar', async (ctx, next) => {
             totaltime: 0,
             isbuiedmoney: 1
         });
+
+        ctx.response.body = {
+            code: 200,
+            message: '成功'
+        };
     } else {
-        await Game_battlewar.create({
-            belongsto: ctx.request.body.account,
-            name: '新战队',
-            level: 1,
-            class: 1,
-            basebattle: 500,
-            isbusy: 0,
-            targetwar: '',
-            starttime: 0,
-            totaltime: 0,
-            isbuiedmoney: 0
-        });
+        if (+targetUser.caoyao > 1000 && +targetUser.woods > 1000 && +targetUser.tiekuang > 1000 && +targetUser.liangshi > 1000) {
+            targetUser.caoyao = +targetUser.caoyao - 1000;
+            targetUser.woods = +targetUser.woods - 1000;
+            targetUser.tiekuang = +targetUser.tiekuang - 1000;
+            targetUser.liangshi = +targetUser.liangshi - 1000;
+            await Game_battlewar.create({
+                id: +new Date(),
+                belongsto: ctx.request.body.account,
+                name: '新战队',
+                level: 1,
+                class: 1,
+                basebattle: 500,
+                isbusy: 0,
+                targetwar: '',
+                starttime: 0,
+                totaltime: 0,
+                isbuiedmoney: 0
+            });
+
+            await targetUser.save();
+
+            ctx.response.body = {
+                code: 200,
+                message: '成功'
+            };
+        } else {
+            ctx.response.body = {
+                code: 400,
+                message: '资源不足'
+            };
+        }
+
     }
 
-    ctx.response.body = {
-        code: 200,
-        message: '成功'
-    };
+
 });
 
 // 创建战斗副本
@@ -124,7 +147,7 @@ router.post('/createNewBattle', async (ctx, next) => {
             }
         });
         targetBattle.starttime = +new Date();
-        targetBattle.totaltime = 2 * 60 * 60;
+        targetBattle.totaltime = 3 * 60 * 60;
         targetBattle.isbusy = 1;
         await targetBattle.save();
     }
@@ -147,11 +170,19 @@ router.post('/finishBattle', async (ctx, next) => {
         }
     });
 
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: ctx.request.body.account
+        }
+    });
+
+    targetUser.gemstone = +targetUser.gemstone + +ctx.request.body.money;
+
     targetBattle.starttime = 0;
     targetBattle.totaltime = 0;
     targetBattle.isbusy = 0;
     await targetBattle.save();
-
+    await targetUser.save();
     ctx.response.body = {
         code: 200,
         message: '成功'

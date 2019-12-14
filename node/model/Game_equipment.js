@@ -15,6 +15,10 @@ let Game_equipment = sequelize.define('game_equipment', {
     gengu: Sequelize.INTEGER,
     level: Sequelize.INTEGER,
     class: Sequelize.INTEGER,
+    id: {
+        type: Sequelize.STRING(50),
+        primaryKey: true
+    }
 }, {
     timestamps: false
 });

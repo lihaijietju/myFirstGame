@@ -123,36 +123,46 @@ router.post('/transportUpclass', async (ctx, next) => {
 // 创建新商队
 router.post('/addNewTransport', async (ctx, next) => {
     await next();
-    // 查询数据
-    await Game_trsnsporter.create({
-        belongsto: ctx.request.body.account,
-        name: '新商队',
-        level: 1,
-        class: 1,
-        baseweight: 1,
-        isBusy: 0,
-        targetcity: '',
-        starttime: 0,
-        totaltime: 0,
-        isbuiedmoney: ctx.request.body.money ? 1 : 0
-    });
 
     let targetUser = await Game_user.findOne({
         where: {
             account: ctx.request.body.account,
         }
     });
-    targetUser.caoyao = +targetUser.caoyao - 1000;
-    targetUser.woods = +targetUser.woods - 1000;
-    targetUser.tiekuang = +targetUser.tiekuang - 1000;
-    targetUser.liangshi = +targetUser.liangshi - 1000;
+    if (+targetUser.caoyao > 1000 && +targetUser.woods > 1000 && +targetUser.tiekuang > 1000 && +targetUser.liangshi > 1000) {
+        targetUser.caoyao = +targetUser.caoyao - 1000;
+        targetUser.woods = +targetUser.woods - 1000;
+        targetUser.tiekuang = +targetUser.tiekuang - 1000;
+        targetUser.liangshi = +targetUser.liangshi - 1000;
 
-    await targetUser.save();
+        await Game_trsnsporter.create({
+            id: +new Date(),
+            belongsto: ctx.request.body.account,
+            name: '新商队',
+            level: 1,
+            class: 1,
+            baseweight: 1,
+            isBusy: 0,
+            targetcity: '',
+            starttime: 0,
+            totaltime: 0,
+            isbuiedmoney: ctx.request.body.money ? 1 : 0
+        });
 
-    ctx.response.body = {
-        code: 200,
-        message: '成功'
-    };
+        await targetUser.save();
+
+        ctx.response.body = {
+            code: 200,
+            message: '成功'
+        };
+    } else {
+        ctx.response.body = {
+            code: 400,
+            message: '资源不足'
+        };
+    }
+
+
 });
 
 //创建贸易
@@ -168,7 +178,7 @@ router.post('/createNewBusiness', async (ctx, next) => {
             }
         });
         targetTransport.starttime = +new Date();
-        targetTransport.totaltime = 24 * 60 * 60;
+        targetTransport.totaltime = 60 * 60;
         targetTransport.targetcity = ctx.request.body.targetCity;
         targetTransport.isBusy = 1;
         await targetTransport.save();
@@ -190,11 +200,19 @@ router.post('/finishBusiness', async (ctx, next) => {
             belongsto: ctx.request.body.account
         }
     });
-    targetTransport.targetcity = '';
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: ctx.request.body.account
+        }
+    });
+
+    targetUser.gold = +targetUser.gold + +ctx.request.body.gold;
+
     targetTransport.starttime = 0;
     targetTransport.totaltime = 0;
     targetTransport.isBusy = 0;
     await targetTransport.save();
+    await targetUser.save();
 
     ctx.response.body = {
         code: 200,

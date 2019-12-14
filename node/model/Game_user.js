@@ -6,6 +6,10 @@ const sequelize = util.getSqlConnection();
 
 
 let Game_user = sequelize.define('game_user', {
+    id: {
+        type: Sequelize.STRING(50),
+        primaryKey: true
+    },
     account: Sequelize.STRING(40),
     username: Sequelize.STRING(40),
     level: Sequelize.INTEGER,
@@ -22,7 +26,7 @@ let Game_user = sequelize.define('game_user', {
     caoyaorate: Sequelize.STRING(10),
     liangshirate: Sequelize.STRING(10),
     woodsrate: Sequelize.STRING(10),
-    currentbattlelevel: Sequelize.INTEGER,  // 当前挂机地图
+    currentbattlelevel: Sequelize.INTEGER, // 当前挂机地图
     xianyuancips: Sequelize.INTEGER, // 仙缘碎片
     keepclassnum: Sequelize.INTEGER, // 保级符
     strongstonenum: Sequelize.INTEGER, // 强化石
@@ -33,7 +37,14 @@ let Game_user = sequelize.define('game_user', {
     liangshibag: Sequelize.INTEGER, // 粮食资源包
     tiekuangbag: Sequelize.INTEGER, // 铁矿资源包
     woodsbag: Sequelize.INTEGER, // 木材资源包
-    caoyaobag: Sequelize.INTEGER // 草药资源包
+    caoyaobag: Sequelize.INTEGER, // 草药资源包
+    battleticket: Sequelize.INTEGER,
+    strength: Sequelize.STRING(40),
+    tizhi: Sequelize.STRING(40),
+    gengu: Sequelize.STRING(40),
+    baoji: Sequelize.STRING(40),
+    speed: Sequelize.STRING(40),
+    battle: Sequelize.STRING(40)
 }, {
     timestamps: false
 });

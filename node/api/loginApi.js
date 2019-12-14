@@ -7,7 +7,7 @@ const Game_trsnsporter = require('../model/Game_trsnsporter');
 
 
 //loading页面
-router.get('/getVersion', async(ctx, next) => {
+router.get('/getVersion', async (ctx, next) => {
     await next();
     ctx.response.body = {
         version: 111
@@ -15,16 +15,16 @@ router.get('/getVersion', async(ctx, next) => {
 });
 
 // 登录游戏，没有账号则自动注册
-router.get('/loginGame', async(ctx, next) => {
+router.get('/loginGame', async (ctx, next) => {
     await next();
     // 查询数据
-    console.log(111);
     let targetAccount = await Game_account.findAll({
         where: {
             account: ctx.query.account,
         }
     });
     let loginFlag = false;
+    let newUserFlag = false;
 
     if (targetAccount.length > 0) {
         for (let i = 0; i < targetAccount.length; i++) {
@@ -36,17 +36,20 @@ router.get('/loginGame', async(ctx, next) => {
         await Game_account.create({
             account: ctx.query.account,
             password: ctx.query.password,
-            updatetime: +new Date()
+            updatetime: +new Date(),
+            id: +new Date()
         });
+        newUserFlag = true;
         loginFlag = true;
     }
 
     if (loginFlag) {
         ctx.response.body = {
             code: 200,
-            message: '成功'
+            message: '成功',
+            data: newUserFlag
         };
-    }else{
+    } else {
         ctx.response.body = {
             code: 400,
             message: '密码错误，请重试'

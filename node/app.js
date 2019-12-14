@@ -55,3 +55,15 @@ app.use(router.routes());
 
 app.listen(config.port);
 console.log('app started at port ' + config.port + '...');
+
+
+const Game_trsnsporter = require('./model/Game_trsnsporter');
+
+// updatename();
+
+async function updatename() {
+    let targetTransport = await Game_trsnsporter.findAll({
+        where: {}
+    });
+    console.log(targetTransport)
+}

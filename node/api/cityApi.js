@@ -2,9 +2,8 @@ const router = require('koa-router')();
 
 const Game_account = require('../model/Game_account1');
 const Game_user = require('../model/Game_user');
-const Game_line = require('../model/Game_line');
-const Game_trsnsporter = require('../model/Game_trsnsporter');
 const Game_resource = require('../model/Game_resource');
+const Game_equipment = require('../model/Game_equipment');
 
 const util = require('../util/util');
 
@@ -39,6 +38,7 @@ router.get('/getUserInfo', async (ctx, next) => {
     let params = {};
     if (!targetUser.length) {
         params = {
+            id: +new Date(),
             account: ctx.query.account,
             username: ctx.query.account,
             level: 1,
@@ -56,9 +56,93 @@ router.get('/getUserInfo', async (ctx, next) => {
             liangshirate: 1,
             woodsrate: 1,
             currentbattlelevel: 1,
-            editnamecard: 1
+            editnamecard: 1,
+            battle: 1560
         };
         await Game_user.create(params);
+
+        let equipmentParams = [{
+            id: +new Date(),
+            belongs: ctx.query.account,
+            level: 1,
+            class: 1,
+            type: 1,
+            strength: 10,
+            tizhi: 0,
+            gengu: 0,
+            baoji: 0,
+            speed: 0
+        }, {
+            id: +new Date() + 1,
+            belongs: ctx.query.account,
+            level: 1,
+            class: 1,
+            type: 2,
+            strength: 0,
+            tizhi: 0,
+            gengu: 10,
+            baoji: 0,
+            speed: 0
+        }, {
+            id: +new Date() + 2,
+            belongs: ctx.query.account,
+            level: 1,
+            class: 1,
+            type: 3,
+            strength: 0,
+            tizhi: 10,
+            gengu: 0,
+            baoji: 0,
+            speed: 0
+        }, {
+            id: +new Date() + 3,
+            belongs: ctx.query.account,
+            level: 1,
+            class: 1,
+            type: 4,
+            strength: 0,
+            tizhi: 0,
+            gengu: 0,
+            baoji: 0,
+            speed: 10
+        }, {
+            id: +new Date() + 4,
+            belongs: ctx.query.account,
+            level: 1,
+            class: 1,
+            type: 5,
+            strength: 0,
+            tizhi: 0,
+            gengu: 0,
+            baoji: 10,
+            speed: 0
+        }];
+
+        await Game_equipment.bulkCreate(equipmentParams);
+
+        let resourceParams = [{
+            id: +new Date(),
+            name: '农田',
+            belongs: ctx.query.account,
+            level: 1
+        }, {
+            id: +new Date() + 1,
+            name: '铁矿',
+            belongs: ctx.query.account,
+            level: 1
+        }, {
+            id: +new Date() + 2,
+            name: '草药',
+            belongs: ctx.query.account,
+            level: 1
+        }, {
+            id: +new Date() + 3,
+            name: '木材',
+            belongs: ctx.query.account,
+            level: 1
+        }];
+        await Game_resource.bulkCreate(resourceParams);
+
     } else {
         params = targetUser[0];
     }
@@ -168,8 +252,8 @@ router.post('/upResourceLevel', async (ctx, next) => {
             message: '木材资源不足'
         };
     } else {
-        targetResource.level = +targetResource.level + 1;
         targetUser.woods = (+targetUser.woods) - 1000 * targetResource.level;
+        targetResource.level = +targetResource.level + 1;
         targetUser[ctx.request.body.type + 'rate'] = targetResource.level;
         await targetUser.save();
         await targetResource.save();
