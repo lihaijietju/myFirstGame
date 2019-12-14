@@ -101,8 +101,8 @@ router.post('/upClassEquipment', async (ctx, next) => {
                 message: '已达最高等阶'
             };
         }
-        targetEquipment.class = +targetEquipment.class + 1;
         targetUser.upclassstone = +targetUser.upclassstone - +targetEquipment.class * 100;
+        targetEquipment.class = +targetEquipment.class + 1;
         await targetEquipment.save();
         await targetUser.save();
         ctx.response.body = {
