@@ -44,7 +44,9 @@ let Game_user = sequelize.define('game_user', {
     gengu: Sequelize.STRING(40),
     baoji: Sequelize.STRING(40),
     speed: Sequelize.STRING(40),
-    battle: Sequelize.INTEGER
+    battle: Sequelize.INTEGER,
+    signFlag: Sequelize.INTEGER,
+    shilianFlag: Sequelize.INTEGER
 }, {
     timestamps: false
 });

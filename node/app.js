@@ -16,6 +16,7 @@ const tradeApi = require('./api/tradeApi');
 const battleApi = require('./api/battleApi');
 const bagApi = require('./api/bagApi');
 const userApi = require('./api/userApi');
+const activityApi = require('./api/activityApi');
 
 const Game_user = require('./model/Game_user');
 const Game_equipment = require('./model/Game_equipment');
@@ -53,14 +54,15 @@ app.use(bagApi.routes()).use(bagApi.allowedMethods());
 // 用户信息相关api
 app.use(userApi.routes()).use(userApi.allowedMethods());
 
+// 活动相关api
+app.use(activityApi.routes()).use(activityApi.allowedMethods());
+
 
 // add router middleware:
 app.use(router.routes());
 
 app.listen(config.port);
 console.log('app started at port ' + config.port + '...');
-
-
 
 
 // 定时任务
@@ -71,7 +73,18 @@ const scheduleCronstyle = () => {
     });
 }
 
+const scheduleInitUserFlag = () => {
+    //每分钟的第30秒定时执行一次:
+    schedule.scheduleJob('0 0 3 * * *', async () => {
+        let userList = await Game_user.findAll();
+        for (let i = 0; i < userList.length; i++) {
+            initUserDailyFlag(userList[i].account);
+        }
+    });
+}
+
 scheduleCronstyle();
+scheduleInitUserFlag();
 
 async function getUserList() {
     let userList = await Game_user.findAll();
@@ -134,5 +147,16 @@ async function updateBattleValue(account) {
 
     let myBattle = propertyInfo.strength * 5 + propertyInfo.gengu * 5 + propertyInfo.tizhi * 10 + propertyInfo.speed * 2 + propertyInfo.baoji * 2;
     targetUser.battle = myBattle;
+    await targetUser.save();
+}
+
+async function initUserDailyFlag(account) {
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: account
+        }
+    });
+    targetUser.shilianFlag = 0;
+    targetUser.signFlag = 0;
     await targetUser.save();
 }
