@@ -10,7 +10,7 @@ const Game_trsnsporter = require('../model/Game_trsnsporter');
 router.get('/getVersion', async (ctx, next) => {
     await next();
     ctx.response.body = {
-        version: 111
+        version: '1.0'
     };
 });
 
