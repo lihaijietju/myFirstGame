@@ -1,0 +1,25 @@
+const Sequelize = require('sequelize');
+const util = require('../util/util');
+
+// 创建数据库连接
+const sequelize = util.getSqlConnection();
+
+let Game_originequipment = sequelize.define('game_originequipment', {
+    belongs: Sequelize.STRING(40),
+    strength: Sequelize.INTEGER,
+    type: Sequelize.INTEGER,
+    tizhi: Sequelize.INTEGER,
+    speed: Sequelize.INTEGER,
+    baoji: Sequelize.INTEGER,
+    gengu: Sequelize.INTEGER,
+    level: Sequelize.INTEGER,
+    class: Sequelize.INTEGER,
+    id: {
+        type: Sequelize.STRING(50),
+        primaryKey: true
+    }
+}, {
+    timestamps: false
+});
+
+module.exports = Game_originequipment;

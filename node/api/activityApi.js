@@ -142,6 +142,21 @@ router.post('/reduceShilianFlag', async (ctx, next) => {
     };
 });
 
+router.post('/sendMoneyToMe', async (ctx, next) => {
+    await next();
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: ctx.request.body.account
+        }
+    });
+    targetUser.gemstone = +targetUser.gemstone + +ctx.request.body.money;
+
+    await targetUser.save();
+    ctx.response.body = {
+        code: 200,
+        message: '成功'
+    };
+});
 
 
 

@@ -17,6 +17,7 @@ const battleApi = require('./api/battleApi');
 const bagApi = require('./api/bagApi');
 const userApi = require('./api/userApi');
 const activityApi = require('./api/activityApi');
+const originEquipmentApi = require('./api/originEquipmentApi');
 
 const Game_user = require('./model/Game_user');
 const Game_equipment = require('./model/Game_equipment');
@@ -56,6 +57,9 @@ app.use(userApi.routes()).use(userApi.allowedMethods());
 
 // 活动相关api
 app.use(activityApi.routes()).use(activityApi.allowedMethods());
+
+// 装备相关api
+app.use(originEquipmentApi.routes()).use(originEquipmentApi.allowedMethods());
 
 
 // add router middleware:
