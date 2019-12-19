@@ -9,6 +9,7 @@ const Game_trsnsporter = require('../model/Game_trsnsporter');
 //loading页面
 router.get('/getVersion', async (ctx, next) => {
     await next();
+    ctx.log.info('校验版本');
     ctx.response.body = {
         version: '1.0'
     };

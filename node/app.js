@@ -9,6 +9,8 @@ const config = require('./config');
 const bodyParser = require('koa-bodyparser');
 const schedule = require('node-schedule');
 
+const myLog = require('koa-sam-log');
+
 // 路由api引用
 const loginApi = require('./api/loginApi');
 const cityApi = require('./api/cityApi');
@@ -36,6 +38,15 @@ app.use(KoaJson());
 app.use(bodyParser());
 app.use(static(path.join(__dirname, './dist')));
 
+app.use(myLog({ 
+    type: 'dateFile',   //按日期创建文件，文件名为 filename + pattern
+    filename: 'logs/',
+    pattern: 'yyyy-MM-dd.log',
+    alwaysIncludePattern: true
+},{
+    env: app.env,      //如果是development则可以同时在控制台中打印
+    level: 'info'      //logger level
+}));
 
 // 登录相关api
 app.use(loginApi.routes()).use(loginApi.allowedMethods());
