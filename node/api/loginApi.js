@@ -4,12 +4,12 @@ const Game_account = require('../model/Game_account1');
 const Game_user = require('../model/Game_user');
 const Game_line = require('../model/Game_line');
 const Game_trsnsporter = require('../model/Game_trsnsporter');
+const utility = require("utility");
 
 
 //loading页面
 router.get('/getVersion', async (ctx, next) => {
     await next();
-    ctx.log.info('校验版本');
     ctx.response.body = {
         version: '1.0'
     };
@@ -24,6 +24,7 @@ router.get('/loginGame', async (ctx, next) => {
             account: ctx.query.account,
         }
     });
+    let md5Value= utility.md5(ctx.query.account);
     let loginFlag = false;
     let newUserFlag = false;
 
@@ -48,7 +49,8 @@ router.get('/loginGame', async (ctx, next) => {
         ctx.response.body = {
             code: 200,
             message: '成功',
-            data: newUserFlag
+            data: newUserFlag,
+            md5Value:md5Value
         };
     } else {
         ctx.response.body = {

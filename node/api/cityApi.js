@@ -4,12 +4,15 @@ const Game_account = require('../model/Game_account1');
 const Game_user = require('../model/Game_user');
 const Game_resource = require('../model/Game_resource');
 const Game_equipment = require('../model/Game_equipment');
-
+const utility = require("utility");
 const util = require('../util/util');
 
 
 // 获取用户账号信息
 router.get('/getAccount', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetAccount = await Game_account.findOne({
@@ -28,6 +31,9 @@ router.get('/getAccount', async (ctx, next) => {
 
 // 获取用户信息
 router.get('/getUserInfo', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetUser = await Game_user.findAll({
@@ -157,6 +163,9 @@ router.get('/getUserInfo', async (ctx, next) => {
 
 // 更新资源信息
 router.post('/updateResource', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -192,6 +201,9 @@ router.post('/updateResource', async (ctx, next) => {
 
 // 更新仙缘信息
 router.post('/updateGemstone', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -211,6 +223,9 @@ router.post('/updateGemstone', async (ctx, next) => {
 });
 // 获取资源田信息
 router.get('/getResourceInfo', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetResourceList = await Game_resource.findAll({
@@ -231,6 +246,9 @@ router.get('/getResourceInfo', async (ctx, next) => {
 
 
 router.post('/upResourceLevel', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({

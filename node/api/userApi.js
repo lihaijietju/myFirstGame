@@ -1,6 +1,7 @@
 const router = require('koa-router')();
 const Game_user = require('../model/Game_user');
 const Game_equipment = require('../model/Game_equipment');
+const utility = require("utility");
 
 router.get('/getUserList', async (ctx, next) => {
     await next();
@@ -20,6 +21,9 @@ router.get('/getUserList', async (ctx, next) => {
 
 // 获取装备列表
 router.get('/getEquipmentList', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let equipmentList = await Game_equipment.findAll({
@@ -38,6 +42,9 @@ router.get('/getEquipmentList', async (ctx, next) => {
 
 // 升级装备
 router.post('/upLevelEquipment', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetEquipment = await Game_equipment.findOne({
@@ -74,6 +81,9 @@ router.post('/upLevelEquipment', async (ctx, next) => {
 
 // 升阶装备
 router.post('/upClassEquipment', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetEquipment = await Game_equipment.findOne({
@@ -115,6 +125,9 @@ router.post('/upClassEquipment', async (ctx, next) => {
 
 // 获取属性列表
 router.get('/getUserPropertyInfo', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let propertyInfo = {
@@ -177,6 +190,9 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
 
 // 合成炼器坊物品
 router.post('/createLianqifang', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     let targetUser = await Game_user.findOne({
         where: {
@@ -253,6 +269,9 @@ router.post('/createLianqifang', async (ctx, next) => {
 
 // 金币购买物品
 router.post('/buyThingsByCoins', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     let targetUser = await Game_user.findOne({
         where: {
@@ -369,6 +388,9 @@ router.post('/buyThingsByCoins', async (ctx, next) => {
 
 // 钻石购买物品
 router.post('/buyThingsByMoney', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     let targetUser = await Game_user.findOne({
         where: {

@@ -8,7 +8,7 @@ const KoaJson = require('koa-json');
 const config = require('./config');
 const bodyParser = require('koa-bodyparser');
 const schedule = require('node-schedule');
-
+const session = require('koa-session');
 const myLog = require('koa-sam-log');
 
 // 路由api引用
@@ -47,6 +47,19 @@ app.use(myLog({
     env: app.env,      //如果是development则可以同时在控制台中打印
     level: 'info'      //logger level
 }));
+
+app.keys = ['some secret hurr'];
+
+const CONFIG = {
+  key: 'koa:sess', /** (string) cookie key (default is koa:sess) */
+  maxAge: 86400000000,
+  overwrite: true, /** (boolean) can overwrite or not (default true) */
+  httpOnly: true, /** (boolean) httpOnly or not (default true) */
+  signed: true, /** (boolean) signed or not (default true) */
+  rolling: false, /** (boolean) Force a session identifier cookie to be set on every response. The expiration is reset to the original maxAge, resetting the expiration countdown. (default is false) */
+  renew: false, /** (boolean) renew session when session is nearly expired, so we can always keep user logged in. (default is false)*/
+};
+app.use(session(CONFIG, app));
 
 // 登录相关api
 app.use(loginApi.routes()).use(loginApi.allowedMethods());

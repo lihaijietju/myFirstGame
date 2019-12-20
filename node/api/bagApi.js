@@ -5,10 +5,14 @@ const Game_user = require('../model/Game_user');
 const Game_line = require('../model/Game_line');
 const Game_trsnsporter = require('../model/Game_trsnsporter');
 const Game_battlewar = require('../model/Game_battlewar');
+const utility = require("utility");
 
 
 // 修改名字
 router.post('/changeName', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -33,6 +37,9 @@ router.post('/changeName', async (ctx, next) => {
 });
 
 router.post('/getResource', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -57,6 +64,9 @@ router.post('/getResource', async (ctx, next) => {
 });
 
 router.post('/getXianyuan', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -81,6 +91,9 @@ router.post('/getXianyuan', async (ctx, next) => {
 });
 
 router.post('/getUpClassStone', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -105,6 +118,9 @@ router.post('/getUpClassStone', async (ctx, next) => {
 });
 
 router.post('/getUpStrongStone', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({

@@ -4,10 +4,14 @@ const Game_account = require('../model/Game_account1');
 const Game_user = require('../model/Game_user');
 const Game_line = require('../model/Game_line');
 const Game_trsnsporter = require('../model/Game_trsnsporter');
+const utility = require("utility");
 
 
 // 获取商队列表
 router.get('/getTransportList', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetTransporter = await Game_trsnsporter.findAll({
@@ -43,6 +47,9 @@ router.get('/getTransportList', async (ctx, next) => {
 
 // 获取贸易线列表
 router.get('/getCityLines', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetLines = await Game_line.findAll({
@@ -69,6 +76,9 @@ router.get('/getCityLines', async (ctx, next) => {
 
 // 升级商队
 router.post('/transportUplevel', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetTransport = await Game_trsnsporter.findOne({
@@ -112,6 +122,9 @@ router.post('/transportUplevel', async (ctx, next) => {
 
 // 升阶商队
 router.post('/transportUpclass', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetTransport = await Game_trsnsporter.findOne({
@@ -134,6 +147,9 @@ router.post('/transportUpclass', async (ctx, next) => {
 
 // 创建新商队
 router.post('/addNewTransport', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
 
     let targetUser = await Game_user.findOne({
@@ -179,6 +195,9 @@ router.post('/addNewTransport', async (ctx, next) => {
 
 //创建贸易
 router.post('/createNewBusiness', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     ctx.request.body.ids = ctx.request.body.ids.split(',');
 
@@ -204,6 +223,9 @@ router.post('/createNewBusiness', async (ctx, next) => {
 
 // 完成贸易
 router.post('/finishBusiness', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
 
     let targetTransport = await Game_trsnsporter.findOne({

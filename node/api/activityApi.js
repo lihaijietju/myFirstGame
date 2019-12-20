@@ -2,10 +2,14 @@ const router = require('koa-router')();
 
 const Game_account = require('../model/Game_account1');
 const Game_user = require('../model/Game_user');
+const utility = require("utility");
 
 
 //loading页面
 router.post('/signUpToday', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     let targetUser = await Game_user.findOne({
         where: {
@@ -93,6 +97,9 @@ router.post('/signUpToday', async (ctx, next) => {
 });
 
 router.get('/getUserInfoDetail', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -110,6 +117,9 @@ router.get('/getUserInfoDetail', async (ctx, next) => {
 
 
 router.post('/finishWujinshilian', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     let targetUser = await Game_user.findOne({
         where: {
@@ -127,6 +137,9 @@ router.post('/finishWujinshilian', async (ctx, next) => {
 });
 
 router.post('/reduceShilianFlag', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     let targetUser = await Game_user.findOne({
         where: {
@@ -143,6 +156,9 @@ router.post('/reduceShilianFlag', async (ctx, next) => {
 });
 
 router.post('/sendMoneyToMe', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     let targetUser = await Game_user.findOne({
         where: {
@@ -150,7 +166,8 @@ router.post('/sendMoneyToMe', async (ctx, next) => {
         }
     });
     targetUser.gemstone = +targetUser.gemstone + +ctx.request.body.money;
-
+    let infoMsg = ctx.request.body.account + '充值' + +ctx.request.body.money;
+    ctx.log.info(infoMsg);
     await targetUser.save();
     ctx.response.body = {
         code: 200,

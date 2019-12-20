@@ -5,10 +5,14 @@ const Game_user = require('../model/Game_user');
 const Game_line = require('../model/Game_line');
 const Game_trsnsporter = require('../model/Game_trsnsporter');
 const Game_battlewar = require('../model/Game_battlewar');
+const utility = require("utility");
 
 
 // 更新挂机副本
 router.post('/updateBattleLevel', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -16,8 +20,6 @@ router.post('/updateBattleLevel', async (ctx, next) => {
             account: ctx.request.body.account,
         }
     });
-    console.log(ctx.request.body)
-
     targetUser.currentbattlelevel = ctx.request.body.currentbattlelevel;
 
     await targetUser.save();
@@ -30,6 +32,9 @@ router.post('/updateBattleLevel', async (ctx, next) => {
 
 // 获取战斗队列表
 router.get('/battleWarList', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetBattleList = await Game_battlewar.findAll({
@@ -64,6 +69,9 @@ router.get('/battleWarList', async (ctx, next) => {
 
 // 创建新战队
 router.post('/addNewBattleWar', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     // 查询数据
 
@@ -135,6 +143,9 @@ router.post('/addNewBattleWar', async (ctx, next) => {
 
 // 创建战斗副本
 router.post('/createNewBattle', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     // 查询数据
     ctx.request.body.ids = ctx.request.body.ids.split(',');
@@ -161,6 +172,9 @@ router.post('/createNewBattle', async (ctx, next) => {
 
 // 完成副本
 router.post('/finishBattle', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
 
     let targetBattle = await Game_battlewar.findOne({
@@ -191,6 +205,9 @@ router.post('/finishBattle', async (ctx, next) => {
 
 // 升级战斗队
 router.post('/battleUplevel', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetBattle = await Game_battlewar.findOne({
@@ -230,6 +247,9 @@ router.post('/battleUplevel', async (ctx, next) => {
 
 // 升阶战斗队
 router.post('/battleUpClass', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
     await next();
     // 查询数据
     let targetBattle = await Game_battlewar.findOne({
