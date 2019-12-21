@@ -157,11 +157,9 @@ router.post('/addNewTransport', async (ctx, next) => {
             account: ctx.request.body.account,
         }
     });
-    if (+targetUser.caoyao > 1000 && +targetUser.woods > 1000 && +targetUser.tiekuang > 1000 && +targetUser.liangshi > 1000) {
-        targetUser.caoyao = +targetUser.caoyao - 1000;
-        targetUser.woods = +targetUser.woods - 1000;
-        targetUser.tiekuang = +targetUser.tiekuang - 1000;
-        targetUser.liangshi = +targetUser.liangshi - 1000;
+    if (targetUser.gemstone >= 1000 && ctx.request.body.money) {
+        targetUser.gemstone = +targetUser.gemstone - 1000;
+        await targetUser.save();
 
         await Game_trsnsporter.create({
             id: +new Date(),
@@ -177,20 +175,43 @@ router.post('/addNewTransport', async (ctx, next) => {
             isbuiedmoney: ctx.request.body.money ? 1 : 0
         });
 
-        await targetUser.save();
-
         ctx.response.body = {
             code: 200,
             message: '成功'
         };
     } else {
-        ctx.response.body = {
-            code: 400,
-            message: '资源不足'
-        };
+        if (+targetUser.caoyao >= 1000 && +targetUser.woods >= 1000 && +targetUser.tiekuang >= 1000 && +targetUser.liangshi >= 1000) {
+            targetUser.caoyao = +targetUser.caoyao - 1000;
+            targetUser.woods = +targetUser.woods - 1000;
+            targetUser.tiekuang = +targetUser.tiekuang - 1000;
+            targetUser.liangshi = +targetUser.liangshi - 1000;
+            
+            await Game_trsnsporter.create({
+                id: +new Date(),
+                belongsto: ctx.request.body.account,
+                name: '新商队',
+                level: 1,
+                class: 1,
+                baseweight: 1,
+                isBusy: 0,
+                targetcity: '',
+                starttime: 0,
+                totaltime: 0,
+                isbuiedmoney: ctx.request.body.money ? 1 : 0
+            });
+            await targetUser.save();
+
+            ctx.response.body = {
+                code: 200,
+                message: '成功'
+            };
+        } else {
+            ctx.response.body = {
+                code: 400,
+                message: '资源不足'
+            };
+        }
     }
-
-
 });
 
 //创建贸易

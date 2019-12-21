@@ -81,7 +81,7 @@ router.post('/addNewBattleWar', async (ctx, next) => {
         }
     });
 
-    if (targetUser.gemstone > 1000 && ctx.request.body.money) {
+    if (targetUser.gemstone >= 1000 && ctx.request.body.money) {
         targetUser.gemstone = +targetUser.gemstone - 1000;
         await targetUser.save();
 
@@ -104,7 +104,7 @@ router.post('/addNewBattleWar', async (ctx, next) => {
             message: '成功'
         };
     } else {
-        if (+targetUser.caoyao > 1000 && +targetUser.woods > 1000 && +targetUser.tiekuang > 1000 && +targetUser.liangshi > 1000) {
+        if (+targetUser.caoyao >= 1000 && +targetUser.woods >= 1000 && +targetUser.tiekuang >= 1000 && +targetUser.liangshi >= 1000) {
             targetUser.caoyao = +targetUser.caoyao - 1000;
             targetUser.woods = +targetUser.woods - 1000;
             targetUser.tiekuang = +targetUser.tiekuang - 1000;
