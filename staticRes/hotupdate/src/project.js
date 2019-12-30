@@ -1311,7 +1311,6 @@ case jsb.EventAssetsManager.NEW_VERSION_FOUND:
 this.label.string = "checked...";
 this._canUpdate = !0;
 this.label.string = "loading";
-this.hotUpdate();
 break;
 
 default:
@@ -1319,6 +1318,7 @@ return;
 }
 this._am.setEventCallback(null);
 this._updating = !1;
+this.hotUpdate();
 },
 goToNewScene: function() {
 cc.director.loadScene("loading");
