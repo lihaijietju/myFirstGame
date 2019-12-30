@@ -96,10 +96,7 @@ this.rank.node.color = cc.Color.YELLOW;
 this.username.node.color = cc.Color.YELLOW;
 this.battle.node.color = cc.Color.YELLOW;
 }
-},
-onLoad: function() {},
-start: function() {},
-update: function(e) {}
+}
 });
 cc._RF.pop();
 }, {} ],
@@ -147,7 +144,6 @@ data: e
 });
 }, this);
 },
-start: function() {},
 update: function(e) {
 if (this.data.totaltime > 0 && this.data.starttime > 0) {
 var t = this.data.totaltime - parseInt((+new Date() - this.data.starttime) / 1e3);
@@ -233,9 +229,7 @@ account: this.userInfoDetail.account
 }, function() {
 cc.vv.message.showMessage("联网失败,请重试", 1);
 });
-},
-start: function() {},
-update: function(e) {}
+}
 });
 cc._RF.pop();
 }, {} ],
@@ -367,8 +361,7 @@ cc.vv.message.showMessage("使用资源包失败，请重试", 1);
 s.operateFlag = !1;
 });
 }
-},
-start: function() {}
+}
 });
 cc._RF.pop();
 }, {} ],
@@ -377,7 +370,6 @@ battleLevelSelect: [ function(e, t, s) {
 cc._RF.push(t, "e5314i97z9PTYKYQ0Pxfbl3", "battleLevelSelect");
 cc.Class({
 extends: cc.Component,
-properties: {},
 onLoad: function() {
 cc.vv.tipsNum = 0;
 },
@@ -395,8 +387,7 @@ cc.director.loadScene("battle");
 cc.vv.message.showMessage("选择试炼之地失败，请重试", 1);
 });
 }
-},
-start: function() {}
+}
 });
 cc._RF.pop();
 }, {} ],
@@ -579,14 +570,9 @@ bottom2: [ function(e, t, s) {
 cc._RF.push(t, "aeb58IOAQlCY6xzx+eRSqv8", "bottom2");
 cc.Class({
 extends: cc.Component,
-properties: {},
 goToOtherScenes: function(e, t) {
-"originEquipment" === t ? cc.vv.message.showMessage("敬请期待", 0) : cc.director.loadScene(t);
-},
-onLoad: function() {
-cc.vv.tipsNum = 0;
-},
-start: function() {}
+cc.director.loadScene(t);
+}
 });
 cc._RF.pop();
 }, {} ],
@@ -595,14 +581,12 @@ cityBottom: [ function(e, t, s) {
 cc._RF.push(t, "13325EEQjhCV6b48OP0X4Jd", "cityBottom");
 cc.Class({
 extends: cc.Component,
-properties: {},
 onLoad: function() {
 cc.vv.tipsNum = 0;
 },
 goToOtherScenes: function(e, t) {
 cc.director.getScene().name !== t && cc.director.loadScene(t);
-},
-start: function() {}
+}
 });
 cc._RF.pop();
 }, {} ],
@@ -1323,13 +1307,6 @@ this.hotUpdate();
 goToNewScene: function() {
 cc.director.loadScene("loading");
 },
-retry: function() {
-if (!this._updating && this._canRetry) {
-this._canRetry = !1;
-console.log("Retry failed Assets...");
-this._am.downloadFailedAssets();
-}
-},
 checkForUpdate: function() {
 this.label.string = "检查更新...";
 this._am.setEventCallback(this.checkCb.bind(this));
@@ -1345,10 +1322,6 @@ this._failCount = 0;
 this._am.update();
 this._updating = !0;
 }
-},
-changesence: function() {
-console.log("改变场景");
-cc.director.loadScene("helloworld");
 },
 onLoad: function() {
 if (cc.sys.isNative) {
@@ -1388,12 +1361,6 @@ this._am.setEventCallback(this.checkCb.bind(this));
 this._failCount = 0;
 this._am.checkUpdate();
 this._updating = !0;
-},
-mainImportCode: function() {
-if (jsb) {
-var e = localStorage.getItem("HotUpdateSearchPaths");
-e && jsb.fileUtils.setSearchPaths(JSON.parse(e));
-}
 }
 });
 cc._RF.pop();
@@ -1407,11 +1374,9 @@ cc.resourcedata = {};
 }
 cc.Class({
 extends: cc.Component,
-properties: {},
 onLoad: function() {
 a();
-},
-start: function() {}
+}
 });
 cc._RF.pop();
 }, {} ],
@@ -1520,8 +1485,7 @@ this.accountTextInfo.string = cc.vv.userInfo.account || "";
 this.passwordTextInfo.string = cc.vv.userInfo.password || "";
 }
 cc.find("bottom") && (cc.find("bottom").active = !1);
-},
-start: function() {}
+}
 });
 cc._RF.pop();
 }, {} ],
@@ -1540,7 +1504,6 @@ type: cc.Node,
 default: null
 }
 },
-onLoad: function() {},
 changeTab: function(e, t) {
 if ("game" === t) {
 this.gameMarket.active = !0;
@@ -1793,17 +1756,11 @@ cc.vv.tipsNum = 0;
 joinQ: function() {
 this.tips.string = "加入qq群：795582916，查看最新游戏预告和攻略";
 },
-goodComment: function() {
-this.tips.string = "加入qq群：795582916，查看最新游戏预告和攻略";
-},
 logOutGame: function() {
 var e = JSON.parse(cc.sys.localStorage.getItem("jakiiAccountInfo"));
 e.isLogin = !1;
 cc.sys.localStorage.setItem("jakiiAccountInfo", JSON.stringify(e));
 cc.director.loadScene("login");
-},
-goToGameTips: function() {
-cc.director.loadScene("gametips");
 }
 });
 cc._RF.pop();
@@ -2310,8 +2267,7 @@ cc.vv.message.showMessage("合成失败", 1);
 a.operateFlag = !1;
 });
 }
-},
-start: function() {}
+}
 });
 cc._RF.pop();
 }, {} ],
@@ -2376,7 +2332,6 @@ e.selfSpeedCurrentCount = e.secondTimes;
 cc.vv.message.showMessage("获取用户信息失败", 1);
 });
 },
-start: function() {},
 update: function(e) {
 var t = this, s = JSON.parse(cc.sys.localStorage.getItem("jakiiAccountInfo"));
 if (this.selfSpeedCurrentCount <= 0) {
