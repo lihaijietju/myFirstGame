@@ -1224,6 +1224,10 @@ label: {
 default: null,
 type: cc.Label
 },
+updateBtn: {
+default: null,
+type: cc.Button
+},
 _canUpdate: !1
 },
 checkCb: function(e) {
@@ -1244,8 +1248,8 @@ break;
 
 case jsb.EventAssetsManager.NEW_VERSION_FOUND:
 this._canUpdate = !0;
-this.label.string = "loading...";
-this.hotUpdate();
+this.updateBtn.active = !0;
+this.label.string = "checking...";
 break;
 
 default:
@@ -1348,6 +1352,7 @@ cc.director.loadScene("helloworld");
 },
 onLoad: function() {
 if (cc.sys.isNative) {
+this.updateBtn.active = !1;
 this._storagePath = (jsb.fileUtils ? jsb.fileUtils.getWritablePath() : "/") + "remote-asset";
 console.log("Storage path for remote asset : " + this._storagePath);
 this.versionCompareHandle = function(e, t) {
