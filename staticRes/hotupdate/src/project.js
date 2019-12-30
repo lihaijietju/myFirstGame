@@ -1224,35 +1224,28 @@ label: {
 default: null,
 type: cc.Label
 },
-updateBtn: {
-default: null,
-type: cc.Button
-},
 _canUpdate: !1
 },
 checkCb: function(e) {
 switch (e.getEventCode()) {
 case jsb.EventAssetsManager.ERROR_NO_LOCAL_MANIFEST:
-this.label.string = "本地文件丢失";
 console.log("No local manifest file found, hot update skipped.");
 break;
 
 case jsb.EventAssetsManager.ERROR_DOWNLOAD_MANIFEST:
 case jsb.EventAssetsManager.ERROR_PARSE_MANIFEST:
 console.log("Fail to download manifest file, hot update skipped.");
-this.label.string = "下载远程mainfest文件错误";
 break;
 
 case jsb.EventAssetsManager.ALREADY_UP_TO_DATE:
 console.log("Already up to date with the latest remote version.");
-this.label.string = "已经是最新版本";
 this.goToNewScene();
 break;
 
 case jsb.EventAssetsManager.NEW_VERSION_FOUND:
-this.label.string = "游戏发现新版本...";
 this._canUpdate = !0;
-this.updateBtn.active = !0;
+this.label.string = "loading...";
+this.hotUpdate();
 break;
 
 default:
@@ -1282,38 +1275,32 @@ break;
 case jsb.EventAssetsManager.ERROR_DOWNLOAD_MANIFEST:
 case jsb.EventAssetsManager.ERROR_PARSE_MANIFEST:
 console.log("Fail to download manifest file, hot update skipped.");
-this.label.string = "下载远程版本文件失败";
 s = !0;
 break;
 
 case jsb.EventAssetsManager.ALREADY_UP_TO_DATE:
 console.log("Already up to date with the latest remote version.");
-this.label.string = "当前为最新版本";
 this.goToNewScene();
 s = !0;
 break;
 
 case jsb.EventAssetsManager.UPDATE_FINISHED:
 console.log("Update finished. " + e.getMessage());
-this.label.string = "更新完成. " + e.getMessage();
 t = !0;
 break;
 
 case jsb.EventAssetsManager.UPDATE_FAILED:
 console.log("Update failed. " + e.getMessage());
-this.label.string = "更新失败. " + e.getMessage();
 this._updating = !1;
 this._canRetry = !0;
 break;
 
 case jsb.EventAssetsManager.ERROR_UPDATING:
 console.log("Asset update error: " + e.getAssetId() + ", " + e.getMessage());
-this.label.string = "资源更新错误: " + e.getAssetId() + ", " + e.getMessage();
 break;
 
 case jsb.EventAssetsManager.ERROR_DECOMPRESS:
 console.log(e.getMessage());
-this.label.string = e.getMessage();
 }
 if (s) {
 this._am.setEventCallback(null);
@@ -1340,7 +1327,7 @@ this._am.downloadFailedAssets();
 }
 },
 checkForUpdate: function() {
-this.label.string = "检查更新...";
+this.label.string = "checking...";
 this._am.setEventCallback(this.checkCb.bind(this));
 this._failCount = 0;
 this._am.checkUpdate();
@@ -1360,19 +1347,16 @@ console.log("改变场景");
 cc.director.loadScene("helloworld");
 },
 onLoad: function() {
-var e = this;
 if (cc.sys.isNative) {
-e.updateBtn.active = !1;
 this._storagePath = (jsb.fileUtils ? jsb.fileUtils.getWritablePath() : "/") + "remote-asset";
 console.log("Storage path for remote asset : " + this._storagePath);
-this.versionCompareHandle = function(t, s) {
-console.log("JS Custom Version Compare: version A is " + t + ", version B is " + s);
-e.label.string = "旧版本:" + t + ",新版本:" + s;
-for (var a = t.split("."), c = s.split("."), n = 0; n < a.length; ++n) {
-var o = parseInt(a[n]), i = parseInt(c[n] || 0);
-if (o !== i) return o - i;
+this.versionCompareHandle = function(e, t) {
+console.log("JS Custom Version Compare: version A is " + e + ", version B is " + t);
+for (var s = e.split("."), a = t.split("."), c = 0; c < s.length; ++c) {
+var n = parseInt(s[c]), o = parseInt(a[c] || 0);
+if (n !== o) return n - o;
 }
-return c.length > a.length ? -1 : 0;
+return a.length > s.length ? -1 : 0;
 };
 this._am = new jsb.AssetsManager("", this._storagePath, this.versionCompareHandle);
 this._am.setVerifyCallback(function(e, t) {
