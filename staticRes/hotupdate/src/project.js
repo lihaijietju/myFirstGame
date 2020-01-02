@@ -1214,7 +1214,6 @@ updateCb: function(e) {
 var t = !1, s = !1;
 switch (e.getEventCode()) {
 case jsb.EventAssetsManager.ERROR_NO_LOCAL_MANIFEST:
-console.log("No local manifest file found, hot update skipped...");
 this.label.string = "local checking fail local";
 s = !0;
 break;
@@ -1292,7 +1291,7 @@ this.goToNewScene();
 break;
 
 case jsb.EventAssetsManager.NEW_VERSION_FOUND:
-this.label.string = "checked...";
+this.label.string = "loading...";
 this._canUpdate = !0;
 this.label.string = "loading";
 break;
@@ -1308,7 +1307,7 @@ goToNewScene: function() {
 cc.director.loadScene("loading");
 },
 checkForUpdate: function() {
-this.label.string = "检查更新...";
+this.label.string = "加载中...";
 this._am.setEventCallback(this.checkCb.bind(this));
 this._failCount = 0;
 this._am.checkUpdate();
@@ -1356,7 +1355,6 @@ this.checkUpdate();
 }
 },
 checkUpdate: function() {
-console.log("检查更新");
 this._am.setEventCallback(this.checkCb.bind(this));
 this._failCount = 0;
 this._am.checkUpdate();
@@ -1584,14 +1582,6 @@ cc._RF.push(t, "4ac78OiiXdO3IYTa+OvByCi", "progress");
 cc.Class({
 extends: cc.Component,
 properties: {
-progressBar: {
-type: cc.Node,
-default: null
-},
-progressdata: {
-type: cc.Label,
-default: null
-},
 status: {
 type: cc.Label,
 default: null
@@ -1604,9 +1594,7 @@ default: null
 loadSource: function() {
 var e = this;
 this.status.string = "加载资源中...";
-cc.loader.loadResDir("textures", function(t, s) {
-e.per = t / s;
-}, function() {
+cc.loader.loadResDir("textures", function(e, t) {}, function() {
 e.finishFlag = !0;
 e.status.string = "资源加载完成，即将开始游戏";
 e.node.active = !1;
@@ -1614,15 +1602,10 @@ e.infoNode.active = !0;
 });
 },
 onLoad: function() {
-this.proBar = this.progressBar.getComponent(cc.ProgressBar);
-this.per = 0;
 this.loadSource();
 },
 update: function(e) {
-if (this.finishFlag) this.status.string = "资源加载完成，即将开始游戏"; else {
-this.proBar.progress = this.per;
-this.progressdata.string = parseInt(100 * this.per) + "%";
-}
+this.finishFlag && (this.status.string = "资源加载完成，即将开始游戏");
 }
 });
 cc._RF.pop();
