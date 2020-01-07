@@ -23,6 +23,8 @@ router.get('/getEquipList', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.query.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
 
     let equipmentList = await Game_equip.findAll({
@@ -44,6 +46,8 @@ router.get('/getEquipmentDetail', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.query.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
 
     let targetEquip = await Game_equip.findOne({
@@ -62,6 +66,8 @@ router.post('/equipUser', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let originEquip = await Game_equip.findOne({
@@ -96,6 +102,8 @@ router.post('/deleteEquipment', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let originEquip = await Game_equip.findOne({
@@ -117,6 +125,8 @@ router.get('/getMyEquipmentList', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.query.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
 
     let equipList = await Game_equip.findAll({
@@ -137,6 +147,8 @@ router.post('/createEquipment', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     console.log(ctx.request.body);
 

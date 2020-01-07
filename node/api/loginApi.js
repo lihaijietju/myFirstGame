@@ -10,6 +10,8 @@ const utility = require("utility");
 //loading页面
 router.get('/getVersion', async (ctx, next) => {
     await next();
+    ctx.log.info();
+
     ctx.response.body = {
         version: '1.0'
     };
@@ -17,6 +19,8 @@ router.get('/getVersion', async (ctx, next) => {
 
 // 登录游戏，没有账号则自动注册
 router.get('/loginGame', async (ctx, next) => {
+    ctx.log.info();
+
     await next();
     // 查询数据
     let targetAccount = await Game_account.findAll({

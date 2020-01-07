@@ -13,6 +13,8 @@ router.post('/changeName', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -40,6 +42,8 @@ router.post('/getResource', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -67,6 +71,8 @@ router.post('/getXianyuan', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -94,6 +100,8 @@ router.post('/getUpClassStone', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -121,6 +129,8 @@ router.post('/getUpStrongStone', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({

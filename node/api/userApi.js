@@ -4,6 +4,8 @@ const Game_equipment = require('../model/Game_equipment');
 const utility = require("utility");
 
 router.get('/getUserList', async (ctx, next) => {
+    ctx.log.info();
+
     await next();
     // 查询数据
     let userList = await Game_user.findAll({
@@ -24,6 +26,8 @@ router.get('/getEquipmentList', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.query.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let equipmentList = await Game_equipment.findAll({
@@ -45,6 +49,8 @@ router.post('/upLevelEquipment', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let targetEquipment = await Game_equipment.findOne({
@@ -84,6 +90,8 @@ router.post('/upClassEquipment', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let targetEquipment = await Game_equipment.findOne({
@@ -128,6 +136,8 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.query.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let propertyInfo = {
@@ -193,6 +203,8 @@ router.post('/createLianqifang', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     let targetUser = await Game_user.findOne({
         where: {
@@ -272,6 +284,8 @@ router.post('/buyThingsByCoins', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     let targetUser = await Game_user.findOne({
         where: {
@@ -391,6 +405,8 @@ router.post('/buyThingsByMoney', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     let targetUser = await Game_user.findOne({
         where: {

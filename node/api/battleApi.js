@@ -13,6 +13,8 @@ router.post('/updateBattleLevel', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -35,6 +37,8 @@ router.get('/battleWarList', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.query.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let targetBattleList = await Game_battlewar.findAll({
@@ -72,6 +76,8 @@ router.post('/addNewBattleWar', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
 
@@ -146,6 +152,8 @@ router.post('/createNewBattle', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     ctx.request.body.ids = ctx.request.body.ids.split(',');
@@ -175,6 +183,8 @@ router.post('/finishBattle', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
 
     let targetBattle = await Game_battlewar.findOne({
@@ -208,6 +218,8 @@ router.post('/battleUplevel', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let targetBattle = await Game_battlewar.findOne({
@@ -250,6 +262,8 @@ router.post('/battleUpClass', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let targetBattle = await Game_battlewar.findOne({

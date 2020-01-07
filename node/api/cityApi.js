@@ -13,6 +13,8 @@ router.get('/getAccount', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.query.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let targetAccount = await Game_account.findOne({
@@ -34,6 +36,8 @@ router.get('/getUserInfo', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.query.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let targetUser = await Game_user.findAll({
@@ -166,6 +170,8 @@ router.post('/updateResource', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -204,6 +210,8 @@ router.post('/updateGemstone', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
@@ -226,6 +234,8 @@ router.get('/getResourceInfo', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.query.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let targetResourceList = await Game_resource.findAll({
@@ -249,6 +259,8 @@ router.post('/upResourceLevel', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({

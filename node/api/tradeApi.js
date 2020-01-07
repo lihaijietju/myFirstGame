@@ -150,6 +150,8 @@ router.post('/addNewTransport', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
 
     let targetUser = await Game_user.findOne({
@@ -219,6 +221,8 @@ router.post('/createNewBusiness', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
     ctx.request.body.ids = ctx.request.body.ids.split(',');
 
@@ -247,6 +251,8 @@ router.post('/finishBusiness', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
     }
+    ctx.log.info();
+
     await next();
 
     let targetTransport = await Game_trsnsporter.findOne({
