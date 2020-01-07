@@ -185,7 +185,7 @@ router.post('/addNewTransport', async (ctx, next) => {
             targetUser.woods = +targetUser.woods - 1000;
             targetUser.tiekuang = +targetUser.tiekuang - 1000;
             targetUser.liangshi = +targetUser.liangshi - 1000;
-            
+
             await Game_trsnsporter.create({
                 id: +new Date(),
                 belongsto: ctx.request.body.account,

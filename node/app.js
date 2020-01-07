@@ -19,7 +19,7 @@ const battleApi = require('./api/battleApi');
 const bagApi = require('./api/bagApi');
 const userApi = require('./api/userApi');
 const activityApi = require('./api/activityApi');
-const originEquipmentApi = require('./api/originEquipmentApi');
+const equipApi = require('./api/equipApi');
 
 const Game_user = require('./model/Game_user');
 const Game_equipment = require('./model/Game_equipment');
@@ -38,26 +38,32 @@ app.use(KoaJson());
 app.use(bodyParser());
 app.use(static(path.join(__dirname, './dist')));
 
-app.use(myLog({ 
-    type: 'dateFile',   //按日期创建文件，文件名为 filename + pattern
+app.use(myLog({
+    type: 'dateFile', //按日期创建文件，文件名为 filename + pattern
     filename: 'logs/',
     pattern: 'yyyy-MM-dd.log',
     alwaysIncludePattern: true
-},{
-    env: app.env,      //如果是development则可以同时在控制台中打印
-    level: 'info'      //logger level
+}, {
+    env: app.env, //如果是development则可以同时在控制台中打印
+    level: 'info' //logger level
 }));
 
 app.keys = ['some secret hurr'];
 
 const CONFIG = {
-  key: 'koa:sess', /** (string) cookie key (default is koa:sess) */
-  maxAge: 86400000000,
-  overwrite: true, /** (boolean) can overwrite or not (default true) */
-  httpOnly: true, /** (boolean) httpOnly or not (default true) */
-  signed: true, /** (boolean) signed or not (default true) */
-  rolling: false, /** (boolean) Force a session identifier cookie to be set on every response. The expiration is reset to the original maxAge, resetting the expiration countdown. (default is false) */
-  renew: false, /** (boolean) renew session when session is nearly expired, so we can always keep user logged in. (default is false)*/
+    key: 'koa:sess',
+    /** (string) cookie key (default is koa:sess) */
+    maxAge: 86400000000,
+    overwrite: true,
+    /** (boolean) can overwrite or not (default true) */
+    httpOnly: true,
+    /** (boolean) httpOnly or not (default true) */
+    signed: true,
+    /** (boolean) signed or not (default true) */
+    rolling: false,
+    /** (boolean) Force a session identifier cookie to be set on every response. The expiration is reset to the original maxAge, resetting the expiration countdown. (default is false) */
+    renew: false,
+    /** (boolean) renew session when session is nearly expired, so we can always keep user logged in. (default is false)*/
 };
 app.use(session(CONFIG, app));
 
@@ -83,7 +89,7 @@ app.use(userApi.routes()).use(userApi.allowedMethods());
 app.use(activityApi.routes()).use(activityApi.allowedMethods());
 
 // 装备相关api
-app.use(originEquipmentApi.routes()).use(originEquipmentApi.allowedMethods());
+app.use(equipApi.routes()).use(equipApi.allowedMethods());
 
 
 // add router middleware:
