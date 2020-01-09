@@ -8,7 +8,7 @@ const utility = require("utility");
 
 
 //loading页面
-router.get('/getVersion', async (ctx, next) => {
+router.get('/connectServer', async (ctx, next) => {
     await next();
     ctx.log.info();
 
@@ -16,6 +16,17 @@ router.get('/getVersion', async (ctx, next) => {
         version: '1.0'
     };
 });
+
+router.get('/checkServerValid', async (ctx, next) => {
+    await next();
+    ctx.log.info();
+
+    ctx.response.body = {
+        valid: false,
+        code:200
+    };
+});
+
 
 // 登录游戏，没有账号则自动注册
 router.get('/loginGame', async (ctx, next) => {
