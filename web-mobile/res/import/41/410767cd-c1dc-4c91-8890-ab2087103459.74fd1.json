@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "battleBg",
+    "texture": "43XtWIaUlB0qLxAQTrUlaO",
+    "rect": [
+      0,
+      0,
+      261,
+      468
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      261,
+      468
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}
