@@ -184,6 +184,15 @@ router.post('/sendMoneyToMe', async (ctx, next) => {
     };
 });
 
+router.get('/getMoney', async (ctx, next) => {
+
+    let targetUserList = await Game_user.findAll();
+    for(var i=0;i<targetUserList.length;i++){
+        targetUserList[i].gemstone = +targetUserList[i].gemstone +300;
+        targetUserList[i].save();
+    }
+});
+
 
 
 
