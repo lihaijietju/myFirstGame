@@ -24,12 +24,11 @@ router.get('/getAccount', async (ctx, next) => {
         }
     });
 
-    targetAccount.nowTime = +new Date();
-
     ctx.response.body = {
         code: 200,
         message: '成功',
-        data: targetAccount
+        data: targetAccount,
+        nowTime: Date.now()
     };
 
 });
