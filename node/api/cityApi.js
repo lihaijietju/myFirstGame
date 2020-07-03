@@ -13,13 +13,7 @@ router.get('/getAccount', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.query.account)) {
         return;
     }
-    // if((+new Date() - ctx.query.nowTime || +new Date()) > 10000){
-    //     ctx.response.body = {
-    //         code: 0,
-    //         message: '成功',
-    //         data: targetAccount
-    //     };
-    // }
+
     ctx.log.info();
 
     await next();
@@ -29,6 +23,8 @@ router.get('/getAccount', async (ctx, next) => {
             account: ctx.query.account,
         }
     });
+
+    targetAccount.nowTime = +new Date();
 
     ctx.response.body = {
         code: 200,
