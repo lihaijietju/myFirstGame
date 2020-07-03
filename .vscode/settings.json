@@ -1,0 +1,8 @@
+{
+    "jumpToAliasFile.alias": {
+        "src": "/Users/bjhl/study/myFirstGame/src",
+        "common": "/Users/bjhl/study/myFirstGame/src/common",
+        "components": "/Users/bjhl/study/myFirstGame/src/components",
+        "api": "/Users/bjhl/study/myFirstGame/src/api"
+    }
+}

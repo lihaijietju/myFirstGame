@@ -87,28 +87,31 @@ router.post('/addNewBattleWar', async (ctx, next) => {
         }
     });
 
-    if (targetUser.gemstone >= 1000 && ctx.request.body.money) {
-        targetUser.gemstone = +targetUser.gemstone - 1000;
-        await targetUser.save();
+    if (ctx.request.body.money) {
+        if(targetUser.gemstone >= 1000){
+            targetUser.gemstone = +targetUser.gemstone - 1000;
+            await targetUser.save();
 
-        await Game_battlewar.create({
-            id: +new Date(),
-            belongsto: ctx.request.body.account,
-            name: '新战队',
-            level: 1,
-            class: 1,
-            basebattle: 500,
-            isbusy: 0,
-            targetwar: '',
-            starttime: 0,
-            totaltime: 0,
-            isbuiedmoney: 1
-        });
+            await Game_battlewar.create({
+                id: +new Date(),
+                belongsto: ctx.request.body.account,
+                name: '新战队',
+                level: 1,
+                class: 1,
+                basebattle: 500,
+                isbusy: 0,
+                targetwar: '',
+                starttime: 0,
+                totaltime: 0,
+                isbuiedmoney: 1
+            });
 
-        ctx.response.body = {
-            code: 200,
-            message: '成功'
-        };
+            ctx.response.body = {
+                code: 200,
+                message: '成功'
+            };
+        }
+
     } else {
         if (+targetUser.caoyao >= 1000 && +targetUser.woods >= 1000 && +targetUser.tiekuang >= 1000 && +targetUser.liangshi >= 1000) {
             targetUser.caoyao = +targetUser.caoyao - 1000;
