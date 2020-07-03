@@ -1,6 +1,8 @@
 const router = require('koa-router')();
 const Game_user = require('../model/Game_user');
 const Game_equipment = require('../model/Game_equipment');
+const Game_equip = require('../model/Game_equip');
+
 const utility = require("utility");
 
 router.get('/getUserList', async (ctx, next) => {
@@ -190,6 +192,18 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
     propertyInfo.gengu = +propertyInfo.gengu + property;
     propertyInfo.speed = +propertyInfo.speed + property;
     propertyInfo.baoji = +propertyInfo.baoji + property;
+
+
+    let targetEquip = await Game_equip.findAll({
+        where: {
+            belongs: ctx.query.account
+        }
+    });
+
+    // 获取装备属性
+    targetEquip.forEach((equipment) => {
+        propertyInfo.battle = +propertyInfo.strength + +equipment.property;
+    });
 
     ctx.response.body = {
         code: 200,
