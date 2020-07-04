@@ -23,6 +23,7 @@ const equipApi = require('./api/equipApi');
 
 const Game_user = require('./model/Game_user');
 const Game_equipment = require('./model/Game_equipment');
+const Game_equip = require('./model/Game_equip');
 
 // 创建一个Koa对象表示web app本身:
 const app = new Koa();
@@ -168,10 +169,7 @@ async function updateBattleValue(account) {
 
     let property = 0;
 
-    for (let i = 0; i < classLevel; i++) {
-        property = property + (i + 1) * 10;
-    }
-    property = property + restLevel * 10 * classLevel
+    property = property + restLevel * 10 + (classLevel * 100)
 
     propertyInfo.strength = +propertyInfo.strength + property;
     propertyInfo.tizhi = +propertyInfo.tizhi + property;
@@ -179,7 +177,19 @@ async function updateBattleValue(account) {
     propertyInfo.speed = +propertyInfo.speed + property;
     propertyInfo.baoji = +propertyInfo.baoji + property;
 
-    let myBattle = propertyInfo.strength * 5 + propertyInfo.gengu * 5 + propertyInfo.tizhi * 10 + propertyInfo.speed * 2 + propertyInfo.baoji * 2;
+    let targetEquip = await Game_equip.findAll({
+        where: {
+            belongs: account,
+            ison: 1
+        }
+    });
+
+    // 获取装备属性
+    targetEquip.forEach((equipment) => {
+        propertyInfo.battle = +propertyInfo.strength + +equipment.property;
+    });
+
+    let myBattle = propertyInfo.strength * 5 + propertyInfo.gengu * 5 + propertyInfo.tizhi * 10 + propertyInfo.speed * 2 + propertyInfo.baoji * 2 + (propertyInfo.battle||0) * 5;
     targetUser.battle = myBattle;
     await targetUser.save();
 }

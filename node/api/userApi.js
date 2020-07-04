@@ -180,12 +180,11 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
     let classLevel = Math.floor(+targetUser.level / 10);
     let restLevel = +targetUser.level - classLevel * 10;
 
+    console.log(classLevel, restLevel ,'restLevel==========');
+
     let property = 0;
 
-    for (let i = 0; i < classLevel; i++) {
-        property = property + (i + 1) * 10;
-    }
-    property = property + restLevel * 10 * classLevel
+    property = +property + (restLevel * 10 + (classLevel * 100))
 
     propertyInfo.strength = +propertyInfo.strength + property;
     propertyInfo.tizhi = +propertyInfo.tizhi + property;
@@ -196,7 +195,8 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
 
     let targetEquip = await Game_equip.findAll({
         where: {
-            belongs: ctx.query.account
+            belongs: ctx.query.account,
+            ison:1
         }
     });
 

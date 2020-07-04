@@ -98,6 +98,8 @@ router.post('/equipUser', async (ctx, next) => {
 
 });
 
+
+
 router.post('/deleteEquipment', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
@@ -113,6 +115,42 @@ router.post('/deleteEquipment', async (ctx, next) => {
         }
     });
     await originEquip.destroy();
+    ctx.response.body = {
+        code: 200,
+        message: '成功'
+    };
+
+});
+
+router.post('/destoryEquip', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
+    ctx.log.info();
+
+    await next();
+
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: ctx.request.body.account
+        }
+    });
+
+    // 查询数据
+    let originEquip = await Game_equip.findOne({
+        where: {
+            belongs: ctx.request.body.account,
+            id: ctx.request.body.id
+        }
+    });
+
+    targetUser.tiekuang = +targetUser.tiekuang + 1000;
+    targetUser.caoyao = +targetUser.caoyao + 1000;
+    targetUser.liangshi = +targetUser.liangshi + 1000;
+    targetUser.woods = +targetUser.woods + 1000;
+
+    await originEquip.destroy();
+    await targetUser.save();
     ctx.response.body = {
         code: 200,
         message: '成功'
