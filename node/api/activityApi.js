@@ -187,8 +187,12 @@ router.post('/sendMoneyToMe', async (ctx, next) => {
 router.get('/getMoney', async (ctx, next) => {
 
     let targetUserList = await Game_user.findAll();
-    for(var i=0;i<targetUserList.length;i++){
+    for(var i=0;i < targetUserList.length;i++){
         targetUserList[i].gemstone = +targetUserList[i].gemstone +300;
+        targetUserList[i].tiekuang = +targetUserList[i].tiekuang +10000;
+        targetUserList[i].caoyao = +targetUserList[i].caoyao +10000;
+        targetUserList[i].liangshi = +targetUserList[i].liangshi +10000;
+        targetUserList[i].woods = +targetUserList[i].woods +10000;
         targetUserList[i].save();
     }
 });
