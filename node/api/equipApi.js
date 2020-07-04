@@ -201,7 +201,89 @@ router.post('/createEquipment', async (ctx, next) => {
 
 });
 
+router.post('/batchCreateEquip', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
+    ctx.log.info();
+    await next();
+
+    for(var i = 0; i< ctx.request.body.equipAmount;i++){
+        let randomNum2 = randomNum(1, 5);
+        let equipObj = {
+
+        };
+        // 装备类型，五种平均
+        equipObj.type = randomNum2;
+        if (equipObj.type === 1) {
+            equipObj.name = '铁剑'
+        }
+        if (equipObj.type === 2) {
+            equipObj.name = '铁甲'
+        }
+        if (equipObj.type === 3) {
+            equipObj.name = '铁帽'
+        }
+        if (equipObj.type === 4) {
+            equipObj.name = '铁靴'
+        }
+        if (equipObj.type === 5) {
+            equipObj.name = '铁戒'
+        }
+        equipObj.belongs = ctx.request.body.account;
+        equipObj.id = +new Date();
+        equipObj.level = randomNum(1, +ctx.request.body.level);
+
+        equipObj.stronglevel = 0;
+        equipObj.ison = 0;
+
+        let randomNum4 = randomNum(1, 100);
+        if (randomNum4 === 100) {
+            equipObj.class = 6;
+        }
+        if (98 < randomNum4 && randomNum4 < 100) {
+            equipObj.class = 5;
+        }
+
+        if (95 < randomNum4 && randomNum4 <= 98) {
+            equipObj.class = 5;
+        }
+
+        if (90 < randomNum4 && randomNum4 <= 95) {
+            equipObj.class = 3;
+        }
+
+        if (70 < randomNum4 && randomNum4 <= 90) {
+            equipObj.class = 2;
+        }
+        if (1 <= randomNum4 && randomNum4 <= 70) {
+            equipObj.class = 1;
+        }
+
+        equipObj.property = equipObj.level * equipObj.class;
+        await Game_equip.create(equipObj);
+    }
+
+    ctx.response.body = {
+        code: 200,
+        message: '成功'
+    };
+
+});
 
 
+function randomNum(minNum, maxNum) {
+    switch (arguments.length) {
+        case 1:
+            return parseInt(Math.random() * minNum + 1, 10);
+            break;
+        case 2:
+            return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
+            break;
+        default:
+            return 0;
+            break;
+    }
+}
 
 module.exports = router;
