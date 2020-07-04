@@ -162,7 +162,8 @@ router.get('/getUserInfo', async (ctx, next) => {
     ctx.response.body = {
         code: 200,
         message: '成功',
-        data: params
+        data: params,
+        nowTime: Date.now()
     };
 
 });
@@ -182,8 +183,6 @@ router.post('/updateResource', async (ctx, next) => {
         }
     });
 
-    util.updateAccountTime(Game_account, ctx.request.body.account);
-
     targetUser.tiekuang = ctx.request.body.tiekuang;
     targetUser.tiejing = ctx.request.body.tiejing;
     targetUser.liangshi = ctx.request.body.liangshi;
@@ -194,6 +193,7 @@ router.post('/updateResource', async (ctx, next) => {
     targetUser.totalexp = ctx.request.body.totalexp;
     targetUser.level = ctx.request.body.level;
     targetUser.currentbattlelevel = ctx.request.body.currentbattlelevel;
+    targetUser.updatetime = Date.now();
 
     targetUser.gold = ctx.request.body.gold;
     targetUser.xianyuancips = ctx.request.body.xianyuancips;
@@ -253,6 +253,7 @@ router.get('/getResourceInfo', async (ctx, next) => {
     };
 
 });
+
 
 // 升级资源田信息
 
