@@ -36,17 +36,23 @@ router.get('/loginGame', async (ctx, next) => {
     // 查询数据
     let targetAccount = await Game_account.findAll({
         where: {
-            account: ctx.query.account,
+            account: ctx.query.account
         }
     });
     let md5Value= utility.md5(ctx.query.account);
     let loginFlag = false;
     let newUserFlag = false;
+    let isdanger = false;
 
     if (targetAccount.length > 0) {
         for (let i = 0; i < targetAccount.length; i++) {
             if (ctx.query.password === targetAccount[i].password) {
-                loginFlag = true;
+                console.log(targetAccount[i].isdanger, '========');
+                if(+targetAccount[i].isdanger) {
+                    isdanger = true;
+                } else {
+                    loginFlag = true;
+                }
             }
         }
     } else {
@@ -68,9 +74,13 @@ router.get('/loginGame', async (ctx, next) => {
             md5Value:md5Value
         };
     } else {
+        var message = '密码错误，请重试';
+        if(isdanger){
+            message = '您已被封号';
+        }
         ctx.response.body = {
             code: 400,
-            message: '密码错误，请重试'
+            message: message
         };
     }
 

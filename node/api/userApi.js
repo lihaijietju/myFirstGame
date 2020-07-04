@@ -11,10 +11,16 @@ router.get('/getUserList', async (ctx, next) => {
     await next();
     // 查询数据
     let userList = await Game_user.findAll({
+        where: {
+            isdanger: 0
+        },
+        limit:50,
         'order': [
             ['battle', 'DESC']
         ]
     });
+
+
 
     ctx.response.body = {
         code: 200,

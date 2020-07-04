@@ -46,7 +46,8 @@ let Game_user = sequelize.define('game_user', {
     speed: Sequelize.STRING(40),
     battle: Sequelize.INTEGER,
     signFlag: Sequelize.INTEGER,
-    shilianFlag: Sequelize.INTEGER
+    shilianFlag: Sequelize.INTEGER,
+    isdanger:Sequelize.INTEGER
 }, {
     timestamps: false
 });
