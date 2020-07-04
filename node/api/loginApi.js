@@ -32,6 +32,14 @@ router.get('/checkServerValid', async (ctx, next) => {
 router.get('/loginGame', async (ctx, next) => {
     ctx.log.info();
 
+    if(!ctx.query.newFlag){
+        ctx.response.body = {
+            code: 400,
+            message: '您的app是旧的版本,请更新'
+        };
+        return;
+    }
+
     await next();
     // 查询数据
     let targetAccount = await Game_account.findAll({
