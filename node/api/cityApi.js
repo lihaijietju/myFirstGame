@@ -162,6 +162,10 @@ router.get('/getUserInfo', async (ctx, next) => {
     } else {
         // 查到用户进行数据更新
         let updateTimes = parseInt((Date.now() - targetUser.updatetime) / 1000 / 5) || 0;
+        // 超过四个小时之内获取四个小时的资源
+        if(updateTimes > 2880){
+            updateTimes = 2880;
+        }
 
         // 创建装备
         batchCreateEquips(updateTimes,targetUser);
