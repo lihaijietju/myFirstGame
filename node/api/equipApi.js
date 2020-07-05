@@ -188,16 +188,35 @@ router.post('/createEquipment', async (ctx, next) => {
     ctx.log.info();
 
     await next();
-    console.log(ctx.request.body);
 
-    ctx.request.body.account = null;
+    let targetAccount = await Game_account.findOne({
+        where:{
+            account:ctx.request.body.account
+        }
+    })
 
-    await Game_equip.create(ctx.request.body);
+    let restTime = Date.now() - (+targetAccount.updatetime);
 
-    ctx.response.body = {
-        code: 200,
-        message: '成功'
-    };
+    targetAccount.updatetime = Date.now();
+
+    if(restTime > 60 * 1000){
+        ctx.request.body.account = null;
+
+        await Game_equip.create(ctx.request.body);
+        await targetAccount.save();
+
+        ctx.response.body = {
+            code: 200,
+            message: '成功'
+        };
+    } else {
+        ctx.response.body = {
+            code: 0,
+            message: '成功'
+        };
+    }
+
+
 
 });
 
