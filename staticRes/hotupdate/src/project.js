@@ -289,7 +289,7 @@ var e = JSON.parse(cc.sys.localStorage.getItem("jakiiAccountInfo"));
 if (1 === cc.vv.userBattleType) {
 cc.vv.userBattleType = 0;
 var t = {}, c = this.randomNum(0, 100);
-if (0 < c && c <= 20) {
+if (0 < c && c <= 5) {
 var s = this.randomNum(1, 5);
 t.type = s;
 1 === t.type && (t.name = "铁剑");
@@ -312,7 +312,7 @@ var a = this.randomNum(1, 100);
 t.property = t.level * t.class;
 t.account = e.account;
 cc.vv.http.sendPostRequest("/createEquipment", t).then(function(e) {
-200 === (e = JSON.parse(e)).code && cc.vv.message.showMessage("恭喜您获取一件新的装备", 0);
+200 === (e = JSON.parse(e)).code ? cc.vv.message.showMessage("恭喜您获取一件新的装备", 0) : cc.vv.message.showMessage("很遗憾，您没有获取装备", 1);
 });
 } else cc.vv.message.showMessage("很遗憾，您没有获取装备", 1);
 }
@@ -899,41 +899,27 @@ return +e > 1e13 ? parseInt(e / 1e13) + "万亿" : +e > 1e8 ? parseInt(e / 1e8) 
 },
 getOfflineResource: function() {
 var e = this;
-e.updateTimes = 0;
 cc.vv.http.sendGetRequest("/getUserInfo", {
 account: e.userInfo.account
 }).then(function(t) {
 var c = (t = JSON.parse(t)).data;
-e.updateTimes = parseInt((+t.nowTime - c.updatetime) / 1e3 / 5);
-if (e.updateTimes > 100) {
-var s = e.randomNum(0, parseInt(e.updateTimes / 500));
-cc.vv.http.sendPostRequest("/batchCreateEquip", {
-account: e.userInfo.account,
-equipAmount: s,
-level: +c.level
-}).then(function(e) {
-200 === (e = JSON.parse(e)).code && cc.vv.message.showMessage("您获取到" + s + "件装备", 0);
-}, function() {});
-}
 e.username.string = c.username;
 e.gemstone.string = c.gemstone;
 e.gold.string = c.gold;
 cc.vv.resourcedata = {
-tiekuang: +c.tiekuang + +c.tiekuangrate * (e.updateTimes || 0),
-liangshi: +c.liangshi + +c.liangshirate * (e.updateTimes || 0),
-caoyao: +c.caoyao + +c.caoyaorate * (e.updateTimes || 0),
-woods: +c.woods + +c.woodsrate * (e.updateTimes || 0),
+tiekuang: +c.tiekuang,
+liangshi: +c.liangshi,
+caoyao: +c.caoyao,
+woods: +c.woods,
 tiekuangrate: +c.tiekuangrate,
 liangshirate: +c.liangshirate,
 caoyaorate: +c.caoyaorate,
 woodsrate: +c.woodsrate,
 gold: +c.gold
 };
-var a = 100 * Math.pow(1.2, c.currentbattlelevel - 1);
-cc.vv.resourcedata.gold = +cc.vv.resourcedata.gold + +parseInt(Math.pow(1.2, c.currentbattlelevel - 1) * (e.updateTimes || 1) / 10);
 cc.vv.userData = {
 account: c.account,
-exp: parseInt(+c.exp + +c.exprate * (e.updateTimes || 0) * a),
+exp: parseInt(+c.exp),
 totalexp: parseInt(+c.totalexp),
 level: +c.level,
 currentbattlelevel: c.currentbattlelevel,
@@ -949,12 +935,6 @@ tiekuangbag: +c.tiekuangbag,
 woodsbag: +c.woodsbag,
 caoyaobag: +c.caoyaobag
 };
-for (;+cc.vv.userData.exp >= +cc.vv.userData.totalexp; ) {
-cc.vv.userData.level = +cc.vv.userData.level + 1;
-cc.vv.userData.exp = parseInt(+cc.vv.userData.exp - +cc.vv.userData.totalexp);
-cc.vv.userData.totalexp = parseInt(1.2 * +cc.vv.userData.totalexp);
-}
-e.updateResource();
 e.showResource();
 }, function() {
 cc.vv.message.showMessage("获取失败", 1);
@@ -969,69 +949,54 @@ this.tiekuang.string = this.dealResourceNum(cc.vv.resourcedata.tiekuang);
 this.liangshi.string = this.dealResourceNum(cc.vv.resourcedata.liangshi);
 this.caoyao.string = this.dealResourceNum(cc.vv.resourcedata.caoyao);
 this.woods.string = this.dealResourceNum(cc.vv.resourcedata.woods);
+this.gold.string = +cc.vv.resourcedata.gold;
 },
 getBattleAndTransport: function() {
 var e = JSON.parse(cc.sys.localStorage.getItem("jakiiAccountInfo")), t = this;
-cc.vv.http.sendGetRequest("/battleWarList", {
-account: e.account
-}).then(function(c) {
-if (200 === (c = JSON.parse(c)).code) {
-for (var s = c.data, a = 0, o = 0; o < s.length; o++) if (s[o].isbusy) {
-if (s[o].totaltime - parseInt((+new Date() - s[o].starttime) / 1e3) <= 0) {
-a += 1 * +s[o].class;
-cc.vv.http.sendPostRequest("/finishBattle", {
-account: e.account,
-id: s[o].id,
-money: a
-}).then(function(c) {
-cc.vv.http.sendGetRequest("/getUserInfo", {
+cc.vv.http.sendPostRequest("/updateTradeList", {
 account: e.account
 }).then(function(e) {
-var c = (e = JSON.parse(e)).data;
-t.gemstone.string = c.gemstone;
-t.gold.string = c.gold;
-}, function() {
-cc.vv.message.showMessage("获取失败", 1);
-});
-});
-}
-}
-} else cc.vv.message.showMessage("获取副本战队失败", 1);
+e = JSON.parse(e);
+t.gemstone.string = +e.data.gemstone;
+console.log(e.data.gemstone, "gemstone====");
 }, function() {});
-cc.vv.http.sendGetRequest("/getTransportList", {
-account: e.account
-}).then(function(c) {
-for (var s = (c = JSON.parse(c)).data, a = 0, o = 0; o < s.length; o++) if (s[o].isbusy) {
-if (s[o].totaltime - parseInt((+new Date() - s[o].starttime) / 1e3) <= 0) {
-a += 10 + 10 * +s[o].class + +s[o].level;
-cc.vv.http.sendPostRequest("/finishBusiness", {
-account: e.account,
-id: s[o].id,
-gold: a
-}).then(function(c) {
-cc.vv.http.sendGetRequest("/getUserInfo", {
+cc.vv.http.sendPostRequest("/updateTradeList", {
 account: e.account
 }).then(function(e) {
-var c = (e = JSON.parse(e)).data;
-t.gemstone.string = c.gemstone;
-t.gold.string = c.gold;
-}, function() {
-cc.vv.message.showMessage("获取失败", 1);
-});
-});
-}
-}
+e = JSON.parse(e);
+t.gold.string = +e.data.gold;
 }, function() {});
 },
-updateResource: function() {
-var e = cc.vv.resourcedata;
-e.exp = cc.vv.userData.exp;
-e.totalexp = cc.vv.userData.totalexp;
-e.level = cc.vv.userData.level;
-e.currentbattlelevel = cc.vv.userData.currentbattlelevel;
-e.account = cc.vv.userData.account;
+getUpdateSource: function() {
+var e = this, t = {
+account: JSON.parse(cc.sys.localStorage.getItem("jakiiAccountInfo")).account
+};
+cc.vv.http.sendPostRequest("/getUpdateSource", t).then(function(t) {
+var c = (t = JSON.parse(t)).data || {};
+cc.vv.resourcedata.tiekuang = +c.tiekuang;
+cc.vv.resourcedata.caoyao = +c.caoyao;
+cc.vv.resourcedata.woods = +c.woods;
+cc.vv.resourcedata.liangshi = +c.liangshi;
+cc.vv.resourcedata.gold = +c.gold;
+cc.vv.userData.exp = parseInt(+c.exp);
+cc.vv.userData.totalexp = parseInt(+c.totalexp);
+cc.vv.userData.level = +c.level;
+e.showResource();
+}, function() {});
+},
+update: function(e) {
+try {
+this.currentCount -= e;
+this.progressdata.string = parseInt(this.currentCount) + 1;
+if (this.currentCount <= 0) {
+this.proBar.progress = 1;
 this.getBattleAndTransport();
-cc.vv.http.sendPostRequest("/updateResource", e).then(function(e) {}, function() {});
+this.currentCount = 5;
+this.getUpdateSource();
+}
+this.proBar.progress = this.currentCount / this.totalCount;
+cc.vv.userData && (this.expProBar.progress = cc.vv.userData.exp / cc.vv.userData.totalexp);
+} catch (e) {}
 },
 goToOtherScenes: function(e, t) {
 this.saveHistory(cc.director.getScene().name);
@@ -1153,25 +1118,6 @@ case 9:
 t += "九阶";
 }
 return t;
-},
-update: function(e) {
-try {
-this.currentCount -= e;
-this.progressdata.string = parseInt(this.currentCount) + 1;
-if (this.currentCount <= 0) {
-this.proBar.progress = 1;
-this.getBattleAndTransport();
-this.currentCount = 5;
-cc.vv.resourcedata.tiekuang = +cc.vv.resourcedata.tiekuang + +cc.vv.resourcedata.tiekuangrate;
-cc.vv.resourcedata.caoyao = +cc.vv.resourcedata.caoyao + +cc.vv.resourcedata.caoyaorate;
-cc.vv.resourcedata.woods = +cc.vv.resourcedata.woods + +cc.vv.resourcedata.woodsrate;
-cc.vv.resourcedata.liangshi = +cc.vv.resourcedata.liangshi + +cc.vv.resourcedata.liangshirate;
-this.showResource();
-this.updateResource();
-}
-this.proBar.progress = this.currentCount / this.totalCount;
-cc.vv.userData && (this.expProBar.progress = cc.vv.userData.exp / cc.vv.userData.totalexp);
-} catch (e) {}
 }
 });
 cc._RF.pop();
@@ -2115,7 +2061,9 @@ userLoginIn: function() {
 var e = this, t = this.accountTextInfo.string, c = this.passwordTextInfo.string;
 t && c && cc.vv.http.sendGetRequest("/loginGame", {
 account: t,
-password: c
+password: c,
+newFlag: 111,
+version: "1.5"
 }).then(function(s) {
 if (200 === (s = JSON.parse(s)).code) {
 cc.vv.userInfo = {
