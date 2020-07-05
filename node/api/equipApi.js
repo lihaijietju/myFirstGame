@@ -32,7 +32,11 @@ router.get('/getEquipList', async (ctx, next) => {
             belongs: ctx.query.account,
             type: ctx.query.equipmentType,
             ison: 0
-        }
+        },
+        order:[
+            ['level','DESC'],
+            ['class','DESC']
+        ]
     });
 
     ctx.response.body = {
@@ -70,16 +74,17 @@ router.post('/equipUser', async (ctx, next) => {
 
     await next();
     // 查询数据
-    let originEquip = await Game_equip.findOne({
+    let originEquipList = await Game_equip.findAll({
         where: {
             belongs: ctx.request.body.account,
             type: ctx.request.body.equipmentType,
             ison: 1
         }
     });
-    if (originEquip) {
-        originEquip.ison = 0;
-        await originEquip.save();
+
+    for(var i=0;i<originEquipList.length;i++){
+        originEquipList[i].ison =0;
+        await originEquipList[i].save();
     }
 
 
