@@ -71,7 +71,9 @@ router.get('/getUserInfo', async (ctx, next) => {
             woodsrate: 1,
             currentbattlelevel: 1,
             editnamecard: 1,
-            battle: 1560
+            battle: 1560,
+            isdanger: 0,
+            updatetime: Date.now()
         };
         await Game_user.create(params);
 
