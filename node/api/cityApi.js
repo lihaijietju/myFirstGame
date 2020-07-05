@@ -184,10 +184,10 @@ router.get('/getUserInfo', async (ctx, next) => {
             while (+currentExp >= +totalExp) {
                 targetUser.level = +targetUser.level + 1;
                 currentExp = parseInt(+currentExp - +totalExp);
-                totalExp = parseInt(+totalExp * 1.2);
+                totalExp = parseInt(Math.pow(1.6,targetUser.level));
             }
             targetUser.exp = currentExp;
-            targetUser.totalExp = totalExp;
+            targetUser.totalexp = totalExp;
 
             await targetUser.save();
             params = targetUser;
@@ -244,11 +244,11 @@ router.post('/getUpdateSource', async (ctx, next) => {
     while (+currentExp >= +totalExp) {
         targetUser.level = +targetUser.level + 1;
         currentExp = parseInt(+currentExp - +totalExp);
-        totalExp = parseInt(+totalExp * 1.2);
+        totalExp = parseInt(Math.pow(1.6,targetUser.level));
         console.log(currentExp, totalExp, '333333', targetUser.level);
     }
 
-    targetUser.totalExp = totalExp;
+    targetUser.totalexp = totalExp;
     targetUser.exp = currentExp;
 
     await targetUser.save();
