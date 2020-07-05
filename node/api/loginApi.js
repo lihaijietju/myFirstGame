@@ -152,4 +152,18 @@ router.get('/sendlongquanbaojian', async (ctx, next) => {
 });
 
 
+router.get('/sendAllGemstone', async (ctx, next) => {
+    await next();
+    ctx.log.info();
+
+    let targetUserList = await Game_user.findAll();
+
+
+
+    ctx.response.body = {
+        message:'1111'
+    };
+});
+
+
 module.exports = router;

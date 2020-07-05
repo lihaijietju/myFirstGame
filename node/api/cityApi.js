@@ -349,10 +349,11 @@ router.get('/getResourceInfo', async (ctx, next) => {
 
 
 async function batchCreateEquips(updateTimes,targetUser){
+
     // 进行装备创建
     if(updateTimes > 100){
         // 随机获取这么多装备
-        let equipAmount = randomNum(0,parseInt(updateTimes / 500));
+        let equipAmount = parseInt(updateTimes / 300)
 
         for(var i = 0; i< equipAmount;i++){
             let randomNum2 = randomNum(1, 5);
