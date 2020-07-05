@@ -353,7 +353,7 @@ async function batchCreateEquips(updateTimes,targetUser){
     // 进行装备创建
     if(updateTimes > 100){
         // 随机获取这么多装备
-        let equipAmount = parseInt(updateTimes / 300)
+        let equipAmount = parseInt(updateTimes / 1000)
 
         for(var i = 0; i< equipAmount;i++){
             let randomNum2 = randomNum(1, 5);
