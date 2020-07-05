@@ -5,6 +5,7 @@ const Game_user = require('../model/Game_user');
 const Game_line = require('../model/Game_line');
 const Game_trsnsporter = require('../model/Game_trsnsporter');
 const utility = require("utility");
+const Game_equip = require('../model/Game_equip');
 
 
 //loading页面
@@ -101,5 +102,54 @@ router.get('/loginGame', async (ctx, next) => {
     }
 
 });
+
+
+router.get('/getGemstone', async (ctx, next) => {
+    await next();
+    ctx.log.info();
+
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: ctx.query.account
+        }
+    });
+
+    targetUser.gemstone = +targetUser.gemstone + (+ctx.query.amount);
+
+    await targetUser.save();
+
+    let message = '充值'+ ctx.query.amount +'钻石成功';
+
+    ctx.response.body = {
+        message:message
+    };
+});
+
+
+router.get('/sendlongquanbaojian', async (ctx, next) => {
+    await next();
+    ctx.log.info();
+
+    let equipObj = {
+        name:'龙泉宝剑',
+        id: Date.now(),
+        belongs:ctx.query.account,
+        level:1,
+        stronglevel:0,
+        ison:0,
+        class:1,
+        property:50,
+        type:1
+    };
+
+    await Game_equip.create(equipObj);
+
+    let message = '好评赠礼成功';
+
+    ctx.response.body = {
+        message:message
+    };
+});
+
 
 module.exports = router;
