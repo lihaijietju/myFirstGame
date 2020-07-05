@@ -184,10 +184,10 @@ async function updateBattleValue(account) {
         }
     });
 
-    // 获取装备属性
-    targetEquip.forEach((equipment) => {
-        propertyInfo.battle = +propertyInfo.strength + +equipment.property;
-    });
+    propertyInfo.battle =0;
+    for(var j=0;j<targetEquip.length;j++){
+        propertyInfo.battle += (+targetEquip[j].property);
+    }
 
     let myBattle = propertyInfo.strength * 5 + propertyInfo.gengu * 5 + propertyInfo.tizhi * 10 + propertyInfo.speed * 2 + propertyInfo.baoji * 2 + (propertyInfo.battle||0) * 5;
     targetUser.battle = myBattle;
