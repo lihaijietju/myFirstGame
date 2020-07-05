@@ -161,7 +161,7 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
             belongs: ctx.query.account
         }
     });
-    // 获取装备属性
+    // 获取法宝属性
     targetEquipment.forEach((equipment) => {
         propertyInfo.strength = +propertyInfo.strength + +equipment.strength + +equipment.level + +equipment.class * 10;
         propertyInfo.tizhi = +propertyInfo.tizhi + +equipment.tizhi + +equipment.level + +equipment.class * 10;
@@ -170,6 +170,7 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
         propertyInfo.baoji = +propertyInfo.baoji + +equipment.baoji + +equipment.level + +equipment.class * 10;
     });
 
+    // 获取自身属性
     let targetUser = await Game_user.findOne({
         where: {
             account: ctx.query.account
@@ -185,8 +186,6 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
 
     let classLevel = Math.floor(+targetUser.level / 10);
     let restLevel = +targetUser.level - classLevel * 10;
-
-    console.log(classLevel, restLevel ,'restLevel==========');
 
     let property = 0;
 
@@ -206,10 +205,10 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
         }
     });
 
-    // 获取装备属性
-    targetEquip.forEach((equipment) => {
-        propertyInfo.battle = +propertyInfo.strength + +equipment.property;
-    });
+    propertyInfo.battle =0;
+    for(var j=0;j<targetEquip.length;j++){
+        propertyInfo.battle += (+targetEquip[j].property);
+    }
 
     ctx.response.body = {
         code: 200,
