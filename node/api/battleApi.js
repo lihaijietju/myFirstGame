@@ -287,4 +287,49 @@ router.post('/battleUpClass', async (ctx, next) => {
     };
 });
 
+router.post('/updateTradeList', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
+    ctx.log.info();
+
+    await next();
+
+    // 查询数据
+    let battleList = await Game_battlewar.findAll({
+        where: {
+            belongsto: ctx.request.body.account,
+        }
+    });
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: ctx.request.body.account,
+        }
+    });
+
+    for (var i = 0; i < battleList.length; i++) {
+        if (+battleList[i].isbusy) {
+            let resttime = battleList[i].totaltime - parseInt((+new Date() - battleList[i].starttime) / 1000);
+            if (resttime <= 0) {
+
+                targetUser.gemstone = +targetUser.gemstone + (+battleList[i].class * 1);
+                console.log(targetUser.gemstone, '=======');
+                battleList[i].isbusy = 0;
+                battleList[i].starttime = 0;
+                battleList[i].totaltime = 0;
+                await battleList[i].save();
+            }
+        }
+    }
+
+    await targetUser.save();
+
+    ctx.response.body = {
+        code: 200,
+        message: '成功',
+        data: targetUser
+    };
+});
+
+
 module.exports = router;

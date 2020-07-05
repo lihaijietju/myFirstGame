@@ -113,11 +113,6 @@ router.post('/transportUplevel', async (ctx, next) => {
             message: '失败'
         };
     }
-
-
-
-
-
 });
 
 // 升阶商队
@@ -281,6 +276,49 @@ router.post('/finishBusiness', async (ctx, next) => {
     };
 });
 
-//
+// 批量更新贸易战队
+router.post('/updateTradeList', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
+    ctx.log.info();
+
+    await next();
+
+    // 查询数据
+    let tradeList = await Game_trsnsporter.findAll({
+        where: {
+            belongsto: ctx.request.body.account,
+        }
+    });
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: ctx.request.body.account,
+        }
+    });
+
+    for (var i = 0; i < tradeList.length; i++) {
+        if (+tradeList[i].isBusy) {
+            let resttime = tradeList[i].totaltime - parseInt((+new Date() - tradeList[i].starttime) / 1000);
+            if (resttime <= 0) {
+                targetUser.gold = +targetUser.gold + (10 + +tradeList[i].class * 10 + +tradeList[i].level);
+                tradeList[i].isBusy = 0;
+                tradeList[i].starttime = 0;
+                tradeList[i].totaltime = 0;
+                await tradeList[i].save();
+            }
+        }
+    }
+
+    await targetUser.save();
+
+    ctx.response.body = {
+        code: 200,
+        message: '成功',
+        data:targetUser
+    };
+
+});
+
 
 module.exports = router;

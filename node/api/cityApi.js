@@ -4,6 +4,8 @@ const Game_account = require('../model/Game_account1');
 const Game_user = require('../model/Game_user');
 const Game_resource = require('../model/Game_resource');
 const Game_equipment = require('../model/Game_equipment');
+const Game_transporter = require('../model/Game_trsnsporter');
+const Game_equip = require('../model/Game_equip');
 const utility = require("utility");
 const util = require('../util/util');
 
@@ -33,7 +35,7 @@ router.get('/getAccount', async (ctx, next) => {
 
 });
 
-// 获取用户信息
+// 获取用户信息,并获取离线资源
 router.get('/getUserInfo', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.query.account)) {
         return;
@@ -42,13 +44,13 @@ router.get('/getUserInfo', async (ctx, next) => {
 
     await next();
     // 查询数据
-    let targetUser = await Game_user.findAll({
+    let targetUser = await Game_user.findOne({
         where: {
             account: ctx.query.account,
         }
     });
     let params = {};
-    if (!targetUser.length) {
+    if (!targetUser) {
         params = {
             id: +new Date(),
             account: ctx.query.account,
@@ -156,7 +158,38 @@ router.get('/getUserInfo', async (ctx, next) => {
         await Game_resource.bulkCreate(resourceParams);
 
     } else {
-        params = targetUser[0];
+        // 查到用户进行数据更新
+        let updateTimes = parseInt((Date.now() - targetUser.updatetime) / 1000 / 5) || 0;
+
+        // 创建装备
+        batchCreateEquips(updateTimes,targetUser);
+
+        if(updateTimes < 1){
+            params = targetUser;
+        } else {
+            targetUser.tiekuang = +targetUser.tiekuang + +targetUser.tiekuangrate * (updateTimes || 0);
+            targetUser.liangshi = +targetUser.liangshi + +targetUser.liangshirate * (updateTimes || 0);
+            targetUser.caoyao = +targetUser.caoyao + +targetUser.caoyaorate * (updateTimes || 0);
+            targetUser.woods = +targetUser.woods + +targetUser.woodsrate * (updateTimes || 0);
+
+            let expRate = Math.pow(1.2, targetUser.currentbattlelevel - 1) * 100;
+            targetUser.gold = +targetUser.gold + +parseInt(Math.pow(1.2, targetUser.currentbattlelevel - 1) * (updateTimes || 1) / 10);
+            targetUser.updatetime = Date.now();
+
+            let currentExp = parseInt(+targetUser.exp + +targetUser.exprate * (updateTimes || 0) * expRate);
+            let totalExp = targetUser.totalexp;
+
+            while (+currentExp >= +totalExp) {
+                targetUser.level = +targetUser.level + 1;
+                currentExp = parseInt(+currentExp - +totalExp);
+                totalExp = parseInt(+totalExp * 1.2);
+            }
+            targetUser.exp = currentExp;
+            targetUser.totalExp = totalExp;
+
+            await targetUser.save();
+            params = targetUser;
+        }
     }
 
     ctx.response.body = {
@@ -168,7 +201,65 @@ router.get('/getUserInfo', async (ctx, next) => {
 
 });
 
-// 更新资源信息
+router.post('/getUpdateSource', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
+    ctx.log.info();
+
+    await next();
+
+    // 查询数据
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: ctx.request.body.account,
+        }
+    });
+
+    let updateTimes = parseInt((Date.now() - targetUser.updatetime) / 1000 / 4) || 0;
+
+    if(updateTimes < 1){
+        ctx.response.body = {
+            code: 0,
+            message: '失败',
+            data:targetUser
+        };
+        return;
+    }
+
+    targetUser.tiekuang = +targetUser.tiekuang + +targetUser.tiekuangrate;
+    targetUser.liangshi = +targetUser.liangshi + +targetUser.liangshirate;
+    targetUser.caoyao = +targetUser.caoyao + +targetUser.caoyaorate;
+    targetUser.woods = +targetUser.woods + +targetUser.woodsrate;
+
+    let expRate = Math.pow(1.2, targetUser.currentbattlelevel - 1) * 100;
+    targetUser.gold = +targetUser.gold + +parseInt(Math.pow(1.2, targetUser.currentbattlelevel - 1) / 10);
+    targetUser.updatetime = Date.now();
+
+    let currentExp = parseInt(+targetUser.exp + +targetUser.exprate * expRate);
+    let totalExp = +targetUser.totalexp;
+
+    while (+currentExp >= +totalExp) {
+        targetUser.level = +targetUser.level + 1;
+        currentExp = parseInt(+currentExp - +totalExp);
+        totalExp = parseInt(+totalExp * 1.2);
+        console.log(currentExp, totalExp, '333333', targetUser.level);
+    }
+
+    targetUser.totalExp = totalExp;
+    targetUser.exp = currentExp;
+
+    await targetUser.save();
+
+    ctx.response.body = {
+        code: 200,
+        message: '成功',
+        data:targetUser
+    };
+
+});
+
+// 更新资源信息(旧)
 router.post('/updateResource', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
@@ -255,6 +346,70 @@ router.get('/getResourceInfo', async (ctx, next) => {
 });
 
 
+async function batchCreateEquips(updateTimes,targetUser){
+    // 进行装备创建
+    if(updateTimes > 100){
+        // 随机获取这么多装备
+        let equipAmount = randomNum(0,parseInt(updateTimes / 500));
+
+        for(var i = 0; i< equipAmount;i++){
+            let randomNum2 = randomNum(1, 5);
+            let equipObj = {};
+            // 装备类型，五种平均
+            equipObj.type = randomNum2;
+            if (equipObj.type === 1) {
+                equipObj.name = '铁剑'
+            }
+            if (equipObj.type === 2) {
+                equipObj.name = '铁甲'
+            }
+            if (equipObj.type === 3) {
+                equipObj.name = '铁帽'
+            }
+            if (equipObj.type === 4) {
+                equipObj.name = '铁靴'
+            }
+            if (equipObj.type === 5) {
+                equipObj.name = '铁戒'
+            }
+            equipObj.belongs = targetUser.account;
+            equipObj.id = +new Date();
+            equipObj.level = randomNum(1, +targetUser.level);
+
+            equipObj.stronglevel = 0;
+            equipObj.ison = 0;
+
+            let randomNum4 = randomNum(1, 100);
+            if (randomNum4 === 100) {
+                equipObj.class = 6;
+            }
+            if (98 < randomNum4 && randomNum4 < 100) {
+                equipObj.class = 5;
+            }
+
+            if (95 < randomNum4 && randomNum4 <= 98) {
+                equipObj.class = 5;
+            }
+
+            if (90 < randomNum4 && randomNum4 <= 95) {
+                equipObj.class = 3;
+            }
+
+            if (70 < randomNum4 && randomNum4 <= 90) {
+                equipObj.class = 2;
+            }
+            if (1 <= randomNum4 && randomNum4 <= 70) {
+                equipObj.class = 1;
+            }
+
+            equipObj.property = equipObj.level * equipObj.class;
+            await Game_equip.create(equipObj);
+        }
+
+    }
+};
+
+
 // 升级资源田信息
 
 
@@ -305,5 +460,19 @@ router.post('/upResourceLevel', async (ctx, next) => {
         };
     }
 });
+
+function randomNum(minNum, maxNum) {
+    switch (arguments.length) {
+        case 1:
+            return parseInt(Math.random() * minNum + 1, 10);
+            break;
+        case 2:
+            return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
+            break;
+        default:
+            return 0;
+            break;
+    }
+}
 
 module.exports = router;
