@@ -35,7 +35,15 @@ router.get('/loginGame', async (ctx, next) => {
     if(!ctx.query.newFlag){
         ctx.response.body = {
             code: 400,
-            message: '您的app是旧的版本,请更新'
+            message: '您的app是旧的版本,请去tap官方或者qq群795582916进行更新'
+        };
+        return;
+    }
+
+    if(ctx.query.version < '1.5'){
+        ctx.response.body = {
+            code: 400,
+            message: '您的app是旧的版本,请去tap官方或者qq群795582916进行更新'
         };
         return;
     }
