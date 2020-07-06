@@ -191,7 +191,7 @@ router.get('/getUserInfo', async (ctx, next) => {
                 if(targetUser.level < 20){
                     totalExp = 1000 * targetUser.level;
                 } else {
-                    totalExp = parseInt(Math.pow(1.3,targetUser.level));
+                    totalExp = parseInt(Math.pow(1.6,targetUser.level));
                 }
             }
             targetUser.exp = currentExp;
@@ -256,7 +256,7 @@ router.post('/getUpdateSource', async (ctx, next) => {
             totalExp = 1000 * targetUser.level;
         }
         else {
-            totalExp = parseInt(Math.pow(1.3,targetUser.level));
+            totalExp = parseInt(Math.pow(1.6,targetUser.level));
         }
         console.log(currentExp, totalExp, '333333', targetUser.level);
     }
