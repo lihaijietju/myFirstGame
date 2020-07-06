@@ -289,7 +289,7 @@ var e = JSON.parse(cc.sys.localStorage.getItem("jakiiAccountInfo"));
 if (1 === cc.vv.userBattleType) {
 cc.vv.userBattleType = 0;
 var t = {}, c = this.randomNum(0, 100);
-if (0 < c && c <= 5) {
+if (0 < c && c <= 10) {
 var s = this.randomNum(1, 5);
 t.type = s;
 1 === t.type && (t.name = "铁剑");
@@ -1144,12 +1144,12 @@ cc.vv.http.sendGetRequest("/getEquipList", {
 account: s.account,
 equipmentType: t || 1
 }).then(function(e) {
-cc.vv.equipBagType = void 0;
+cc.vv.equipBagType = t || 1;
 if (200 === (e = JSON.parse(e)).code) {
-for (var t = e.equipmentList, s = 0; s < t.length; s++) if (c.equipPrefab) {
-var a = cc.instantiate(c.equipPrefab), o = t[s];
-c.node.addChild(a);
-a.getComponent("EquipmentTemplate").init(o, function(e) {
+for (var s = e.equipmentList, a = 0; a < s.length; a++) if (c.equipPrefab) {
+var o = cc.instantiate(c.equipPrefab), n = s[a];
+c.node.addChild(o);
+o.getComponent("EquipmentTemplate").init(n, function(e) {
 if ("showdetail" === e.operate) {
 cc.vv.currentEquipId = e.id;
 c.saveHistory("equipBag");
@@ -1182,7 +1182,7 @@ cc.vv.message.showMessage("分解失败", 1);
 });
 },
 equipUser: function(e) {
-var t = cc.vv.equipmentType, c = JSON.parse(cc.sys.localStorage.getItem("jakiiAccountInfo"));
+var t = cc.vv.equipBagType, c = JSON.parse(cc.sys.localStorage.getItem("jakiiAccountInfo"));
 cc.vv.http.sendPostRequest("/equipUser", {
 account: c.account,
 equipmentType: t,
@@ -1668,6 +1668,10 @@ s.operateFlag = !1;
 });
 } else {
 for (var n = 0, i = 0; i < this.battleWarList.length; i++) this.battleWarList[i].isbuiedmoney || n++;
+if (n >= 5) {
+cc.vv.message.showMessage("当前战队已达到最大战队数量", 1);
+return;
+}
 if (parseInt(cc.vv.userData.level / 10) + 1 <= n) {
 cc.vv.message.showMessage("当前战队已达到最大战队数量", 1);
 return;
@@ -2413,6 +2417,10 @@ this.operateFlag = !1;
 });
 } else {
 for (var n = 0, i = 0; i < this.transportList.length; i++) this.transportList[i].isbuiedmoney || n++;
+if (n >= 5) {
+cc.vv.message.showMessage("当前商队已达到最大商队数量", 1);
+return;
+}
 if (parseInt(cc.vv.userData.level / 10) + 1 <= n) {
 cc.vv.message.showMessage("当前商队已达到最大商队数量", 1);
 return;
