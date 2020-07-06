@@ -106,7 +106,9 @@ router.get('/loginGame', async (ctx, next) => {
 
 router.get('/getGameNotice', async (ctx, next) => {
 
-    let gameNotice = "1、本游戏测试公告\n 2、本游戏测试公告\n 3、本游戏测试公告";
+    let gameNotice = "1、增加公告板功能\n2、优化主城市页面卡顿性能\n3、贸易队和战队改为手动收货";
+
+    console.log(gameNotice);
 
     ctx.response.body = {
         code: 200,
@@ -172,7 +174,7 @@ router.get('/sendAllGemstone', async (ctx, next) => {
 
     let targetUserList = await Game_user.findAll();
     for(let i =0;i<targetUserList.length;i++){
-        targetUserList[i].gemstone = targetUserList[i].gemstone + 3000;
+        targetUserList[i].gemstone = targetUserList[i].gemstone + 1000;
         await targetUserList[i].save();
     }
 

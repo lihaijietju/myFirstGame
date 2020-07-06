@@ -256,24 +256,41 @@ router.post('/finishBusiness', async (ctx, next) => {
             belongsto: ctx.request.body.account
         }
     });
-    let targetUser = await Game_user.findOne({
-        where: {
-            account: ctx.request.body.account
-        }
-    });
 
-    targetUser.gold = +targetUser.gold + +ctx.request.body.gold;
+    let gold = 0;
 
-    targetTransport.starttime = 0;
-    targetTransport.totaltime = 0;
-    targetTransport.isBusy = 0;
-    await targetTransport.save();
-    await targetUser.save();
+    let resttime = targetTransport.totaltime - parseInt((+new Date() - targetTransport.starttime) / 1000);
+    if (resttime <= 0) {
+        gold = (10 + +targetTransport.class * 10 + +targetTransport.level);
+        let targetUser = await Game_user.findOne({
+            where: {
+                account: ctx.request.body.account
+            }
+        });
 
-    ctx.response.body = {
-        code: 200,
-        message: '成功'
-    };
+        targetUser.gold = +targetUser.gold + gold;
+
+        targetTransport.starttime = 0;
+        targetTransport.totaltime = 0;
+        targetTransport.isBusy = 0;
+        await targetTransport.save();
+        await targetUser.save();
+
+        ctx.response.body = {
+            code: 200,
+            message: '成功',
+            data: gold
+        };
+    } else{
+        ctx.response.body = {
+            code: 400,
+            message: '失败'
+        };
+    }
+
+
+
+
 });
 
 // 批量更新贸易战队

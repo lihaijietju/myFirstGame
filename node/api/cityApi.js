@@ -363,10 +363,13 @@ router.get('/getResourceInfo', async (ctx, next) => {
 
 async function batchCreateEquips(updateTimes,targetUser){
 
+    updateTimes = 10000;
     // 进行装备创建
     if(updateTimes > 100){
         // 随机获取这么多装备
-        let equipAmount = parseInt(updateTimes / 1000)
+        let equipAmount = parseInt(updateTimes / 1000);
+
+        let equipList =[];
 
         for(var i = 0; i< equipAmount;i++){
             let randomNum2 = randomNum(1, 5);
@@ -389,7 +392,7 @@ async function batchCreateEquips(updateTimes,targetUser){
                 equipObj.name = '铁戒'
             }
             equipObj.belongs = targetUser.account;
-            equipObj.id = +new Date();
+            equipObj.id = +new Date() + i;
             equipObj.level = randomNum(1, +targetUser.level);
 
             equipObj.stronglevel = 0;
@@ -419,9 +422,11 @@ async function batchCreateEquips(updateTimes,targetUser){
             }
 
             equipObj.property = equipObj.level * equipObj.class;
-            await Game_equip.create(equipObj);
+
+            equipList.push(equipObj);
         }
 
+        await Game_equip.bulkCreate(equipList);
     }
 };
 

@@ -197,23 +197,38 @@ router.post('/finishBattle', async (ctx, next) => {
         }
     });
 
-    let targetUser = await Game_user.findOne({
-        where: {
-            account: ctx.request.body.account
-        }
-    });
+    let money = 0;
+    let resttime = targetBattle.totaltime - parseInt((+new Date() - targetBattle.starttime) / 1000);
 
-    targetUser.gemstone = +targetUser.gemstone + +ctx.request.body.money;
+    if (resttime <= 0) {
+        money = targetBattle.class * 1;
+        let targetUser = await Game_user.findOne({
+            where: {
+                account: ctx.request.body.account
+            }
+        });
 
-    targetBattle.starttime = 0;
-    targetBattle.totaltime = 0;
-    targetBattle.isbusy = 0;
-    await targetBattle.save();
-    await targetUser.save();
-    ctx.response.body = {
-        code: 200,
-        message: '成功'
-    };
+        console.log()
+
+        targetUser.gemstone = +targetUser.gemstone + money;
+
+        targetBattle.starttime = 0;
+        targetBattle.totaltime = 0;
+        targetBattle.isbusy = 0;
+        await targetBattle.save();
+        await targetUser.save();
+
+        ctx.response.body = {
+            code: 200,
+            message: '成功',
+            data: money
+        };
+    } else{
+        ctx.response.body = {
+            code: 400,
+            message: '失败'
+        };
+    }
 });
 
 // 升级战斗队
