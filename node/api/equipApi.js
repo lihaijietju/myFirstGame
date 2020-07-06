@@ -204,7 +204,7 @@ router.post('/createEquipment', async (ctx, next) => {
 
     targetAccount.updatetime = Date.now();
 
-    if(restTime > 6 * 60 * 1000){
+    if(restTime > 10 * 60 * 1000){
         ctx.request.body.account = null;
 
         await Game_equip.create(ctx.request.body);
