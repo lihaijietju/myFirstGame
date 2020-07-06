@@ -149,10 +149,10 @@ router.post('/destoryEquip', async (ctx, next) => {
         }
     });
 
-    targetUser.tiekuang = +targetUser.tiekuang + 1000;
-    targetUser.caoyao = +targetUser.caoyao + 1000;
-    targetUser.liangshi = +targetUser.liangshi + 1000;
-    targetUser.woods = +targetUser.woods + 1000;
+    targetUser.tiekuang = +targetUser.tiekuang + (+originEquip.class * 300);
+    targetUser.caoyao = +targetUser.caoyao + (+originEquip.class * 300);
+    targetUser.liangshi = +targetUser.liangshi + (+originEquip.class * 300);
+    targetUser.woods = +targetUser.woods + (+originEquip.class * 300);
 
     await originEquip.destroy();
     await targetUser.save();

@@ -46,7 +46,7 @@ app.use(myLog({
     alwaysIncludePattern: true
 }, {
     env: app.env, //如果是development则可以同时在控制台中打印
-    level: 'info' //logger level
+    level: 'error' //logger level
 }));
 
 app.keys = ['some secret hurr'];

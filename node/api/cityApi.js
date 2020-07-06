@@ -58,7 +58,7 @@ router.get('/getUserInfo', async (ctx, next) => {
             level: 1,
             exp: 0,
             exprate: 1,
-            totalexp: 10000,
+            totalexp: 1000,
             gold: 2000,
             gemstone: 1000,
             tiekuang: 0,
@@ -188,7 +188,11 @@ router.get('/getUserInfo', async (ctx, next) => {
             while (+currentExp >= +totalExp) {
                 targetUser.level = +targetUser.level + 1;
                 currentExp = parseInt(+currentExp - +totalExp);
-                totalExp = parseInt(Math.pow(1.6,targetUser.level));
+                if(targetUser.level < 20){
+                    totalExp = 1000 * targetUser.level;
+                } else {
+                    totalExp = parseInt(Math.pow(1.3,targetUser.level));
+                }
             }
             targetUser.exp = currentExp;
             targetUser.totalexp = totalExp;
@@ -248,7 +252,12 @@ router.post('/getUpdateSource', async (ctx, next) => {
     while (+currentExp >= +totalExp) {
         targetUser.level = +targetUser.level + 1;
         currentExp = parseInt(+currentExp - +totalExp);
-        totalExp = parseInt(Math.pow(1.6,targetUser.level));
+        if(targetUser.level < 20){
+            totalExp = 1000 * targetUser.level;
+        }
+        else {
+            totalExp = parseInt(Math.pow(1.3,targetUser.level));
+        }
         console.log(currentExp, totalExp, '333333', targetUser.level);
     }
 
