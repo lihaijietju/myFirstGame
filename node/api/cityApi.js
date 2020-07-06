@@ -363,7 +363,6 @@ router.get('/getResourceInfo', async (ctx, next) => {
 
 async function batchCreateEquips(updateTimes,targetUser){
 
-    updateTimes = 10000;
     // 进行装备创建
     if(updateTimes > 100){
         // 随机获取这么多装备
