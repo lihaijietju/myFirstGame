@@ -23,7 +23,7 @@ router.get('/checkServerValid', async (ctx, next) => {
     ctx.log.info();
 
     ctx.response.body = {
-        valid: true,
+        valid: false,
         code:200
     };
 });
