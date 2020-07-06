@@ -104,6 +104,18 @@ router.get('/loginGame', async (ctx, next) => {
 });
 
 
+router.get('/getGameNotice', async (ctx, next) => {
+
+    let gameNotice = "1、本游戏测试公告\n 2、本游戏测试公告\n 3、本游戏测试公告";
+
+    ctx.response.body = {
+        code: 200,
+        message: '成功',
+        data: gameNotice
+    };
+});
+
+// 重置钻石(按用户)
 router.get('/getGemstone', async (ctx, next) => {
     await next();
     ctx.log.info();
@@ -126,6 +138,7 @@ router.get('/getGemstone', async (ctx, next) => {
 });
 
 
+// 发送好评奖励
 router.get('/sendlongquanbaojian', async (ctx, next) => {
     await next();
     ctx.log.info();
@@ -152,13 +165,16 @@ router.get('/sendlongquanbaojian', async (ctx, next) => {
 });
 
 
+// 给所有人发钻石
 router.get('/sendAllGemstone', async (ctx, next) => {
     await next();
     ctx.log.info();
 
     let targetUserList = await Game_user.findAll();
-
-
+    for(let i =0;i<targetUserList.length;i++){
+        targetUserList[i].gemstone = targetUserList[i].gemstone + 3000;
+        await targetUserList[i].save();
+    }
 
     ctx.response.body = {
         message:'1111'
