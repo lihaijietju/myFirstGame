@@ -106,7 +106,7 @@ router.get('/loginGame', async (ctx, next) => {
 
 router.get('/getGameNotice', async (ctx, next) => {
 
-    let gameNotice = "1、增加公告板功能\n2、优化主城市页面卡顿性能\n3、贸易队和战队改为手动收货";
+    let gameNotice = "1、增加公告板功能\n2、优化主城市页面卡顿性能\n3、贸易队和战队改为手动收货\n4、温馨提示:更新的话建议卸载重装\n否则可能会出部分小问题\n卸载重装可解决";
 
     console.log(gameNotice);
 
