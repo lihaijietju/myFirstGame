@@ -106,7 +106,7 @@ router.get('/loginGame', async (ctx, next) => {
 
 router.get('/getGameNotice', async (ctx, next) => {
 
-    let gameNotice = "重要公告:如果发现自己号被人使用，可怜加入qq群私聊群主给改密码";
+    let gameNotice = "重要公告:如果发现自己号被人使用\n可以加入qq群私聊群主给改密码";
 
     console.log(gameNotice);
 
