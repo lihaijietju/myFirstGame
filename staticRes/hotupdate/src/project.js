@@ -2398,17 +2398,13 @@ properties: {
 itemPrefab: cc.Prefab
 },
 onLoad: function() {
-cc.vv = {};
-cc.vv.http = e("HTTP");
-cc.vv.message = e("messageTip");
-cc.vv.resourcedata = {};
-cc.vv.userInfo = {};
 cc.vv.tipsNum = 0;
 this.reloadTransport();
 cc.find("back") && (cc.find("back").active = !0);
 },
 addNewTransport: function(e, t) {
 var c = this, s = JSON.parse(cc.sys.localStorage.getItem("jakiiAccountInfo"));
+console.log("11111111", cc.vv.userData);
 if (t) {
 if (cc.vv.userData.gemstone < 1e3) {
 cc.vv.message.showMessage("钻石不足，请充值", 1);
@@ -2608,10 +2604,7 @@ e.submitFlag = !1;
 }
 });
 cc._RF.pop();
-}, {
-HTTP: "HTTP",
-messageTip: "messageTip"
-} ],
+}, {} ],
 userbattle: [ function(e, t, c) {
 "use strict";
 cc._RF.push(t, "a198bDO07pAcYTBo1+6xh4l", "userbattle");
