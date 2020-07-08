@@ -107,9 +107,6 @@ router.get('/loginGame', async (ctx, next) => {
 router.get('/getGameNotice', async (ctx, next) => {
 
     let gameNotice = "1、重要公告:如果发现自己号被人使用\n可以加入qq群私聊群主给改密码\n2、修复新建号背包物品数量NAN问题\n3、修复钻石数量用完不更新问题\n4、修复部分页面点击穿透问题";
-
-    console.log(gameNotice);
-
     ctx.response.body = {
         code: 200,
         message: '成功',

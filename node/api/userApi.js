@@ -139,7 +139,7 @@ router.post('/upClassEquipment', async (ctx, next) => {
     }
 });
 
-// 获取属性列表
+// 获取玩家属性
 router.get('/getUserPropertyInfo', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.query.account)) {
         return;
@@ -163,11 +163,27 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
     });
     // 获取法宝属性
     targetEquipment.forEach((equipment) => {
-        propertyInfo.strength = +propertyInfo.strength + +equipment.strength + +equipment.level + +equipment.class * 10;
-        propertyInfo.tizhi = +propertyInfo.tizhi + +equipment.tizhi + +equipment.level + +equipment.class * 10;
-        propertyInfo.gengu = +propertyInfo.gengu + +equipment.gengu + +equipment.level + +equipment.class * 10;
-        propertyInfo.speed = +propertyInfo.speed + +equipment.speed + +equipment.level + +equipment.class * 10;
-        propertyInfo.baoji = +propertyInfo.baoji + +equipment.baoji + +equipment.level + +equipment.class * 10;
+        propertyInfo.strength = +propertyInfo.strength + +equipment.strength;
+        propertyInfo.tizhi = +propertyInfo.tizhi + +equipment.tizhi;
+        propertyInfo.gengu = +propertyInfo.gengu + +equipment.gengu;
+        propertyInfo.speed = +propertyInfo.speed + +equipment.speed;
+        propertyInfo.baoji = +propertyInfo.baoji + +equipment.baoji;
+
+        if(+equipment.type ===1){
+            propertyInfo.strength = +propertyInfo.strength + +equipment.level*5 + +equipment.class * 20;
+        }
+        if(+equipment.type ===2){
+            propertyInfo.gengu = +propertyInfo.gengu + +equipment.level*5 + +equipment.class * 20;
+        }
+        if(+equipment.type ===3){
+            propertyInfo.tizhi = +propertyInfo.tizhi + +equipment.level*5 + +equipment.class * 20;
+        }
+        if(+equipment.type ===4){
+            propertyInfo.speed = +propertyInfo.speed + +equipment.level*5 + +equipment.class * 20;
+        }
+        if(+equipment.type ===5){
+            propertyInfo.baoji = +propertyInfo.baoji + +equipment.level*5 + +equipment.class * 20;
+        }
     });
 
     // 获取自身属性
@@ -184,13 +200,10 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
     propertyInfo.speed = +propertyInfo.speed + +targetUser.speed;
     propertyInfo.baoji = +propertyInfo.baoji + +targetUser.baoji;
 
-    let classLevel = Math.floor(+targetUser.level / 10);
-    let restLevel = +targetUser.level - classLevel * 10;
 
+    // 等级新增属性
     let property = 0;
-
-    property = +property + (restLevel * 10 + (classLevel * 100))
-
+    property = +targetUser.level*5;
     propertyInfo.strength = +propertyInfo.strength + property;
     propertyInfo.tizhi = +propertyInfo.tizhi + property;
     propertyInfo.gengu = +propertyInfo.gengu + property;
@@ -198,18 +211,32 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
     propertyInfo.baoji = +propertyInfo.baoji + property;
 
 
+    propertyInfo.battle =0;
+
+    // 装备属性
     let targetEquip = await Game_equip.findAll({
         where: {
             belongs: ctx.query.account,
             ison:1
         }
     });
-
-    propertyInfo.battle =0;
     for(var j=0;j<targetEquip.length;j++){
-        propertyInfo.battle += (+targetEquip[j].property);
+        if(+targetEquip[j].type===1){
+            propertyInfo.strength = propertyInfo.strength + (+targetEquip[j].property);
+        }
+        if(+targetEquip[j].type===2){
+            propertyInfo.gengu = propertyInfo.gengu + (+targetEquip[j].property);
+        }
+        if(+targetEquip[j].type===3){
+            propertyInfo.tizhi = propertyInfo.tizhi + (+targetEquip[j].property);
+        }
+        if(+targetEquip[j].type===4){
+            propertyInfo.speed = propertyInfo.speed + (+targetEquip[j].property);
+        }
+        if(+targetEquip[j].type===5){
+            propertyInfo.baoji = propertyInfo.baoji + (+targetEquip[j].property);
+        }
     }
-
     ctx.response.body = {
         code: 200,
         message: '成功',
