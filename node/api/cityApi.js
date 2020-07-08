@@ -9,6 +9,8 @@ const Game_equip = require('../model/Game_equip');
 const utility = require("utility");
 const util = require('../util/util');
 
+const experience = require('../data/experience');
+
 
 // 获取用户账号信息
 router.get('/getAccount', async (ctx, next) => {
@@ -161,10 +163,10 @@ router.get('/getUserInfo', async (ctx, next) => {
 
     } else {
         // 查到用户进行数据更新
-        let updateTimes = parseInt((Date.now() - targetUser.updatetime) / 1000 / 5) || 0;
+        let updateTimes = parseInt((Date.now() - targetUser.updatetime) / 1000 / 6) || 0;
         // 超过四个小时之内获取四个小时的资源
-        if(updateTimes > 2880){
-            updateTimes = 2880;
+        if(updateTimes > 3600){
+            updateTimes = 3600;
         }
 
         // 创建装备
@@ -188,11 +190,7 @@ router.get('/getUserInfo', async (ctx, next) => {
             while (+currentExp >= +totalExp) {
                 targetUser.level = +targetUser.level + 1;
                 currentExp = parseInt(+currentExp - +totalExp);
-                if(targetUser.level < 20){
-                    totalExp = 1000 * targetUser.level;
-                } else {
-                    totalExp = parseInt(Math.pow(1.6,targetUser.level));
-                }
+                totalExp = experience[(targetUser.level-1)];
             }
             targetUser.exp = currentExp;
             targetUser.totalexp = totalExp;
@@ -251,14 +249,9 @@ router.post('/getUpdateSource', async (ctx, next) => {
 
     while (+currentExp >= +totalExp) {
         targetUser.level = +targetUser.level + 1;
+        console.log(targetUser.level)
         currentExp = parseInt(+currentExp - +totalExp);
-        if(targetUser.level < 20){
-            totalExp = 1000 * targetUser.level;
-        }
-        else {
-            totalExp = parseInt(Math.pow(1.6,targetUser.level));
-        }
-        console.log(currentExp, totalExp, '333333', targetUser.level);
+        totalExp = experience[(targetUser.level-1)];
     }
 
     targetUser.totalexp = totalExp;
@@ -364,9 +357,9 @@ router.get('/getResourceInfo', async (ctx, next) => {
 async function batchCreateEquips(updateTimes,targetUser){
 
     // 进行装备创建
-    if(updateTimes > 100){
+    if(updateTimes > 200){
         // 随机获取这么多装备
-        let equipAmount = parseInt(updateTimes / 1000);
+        let equipAmount = parseInt(updateTimes / 600) + 1;
 
         let equipList =[];
 

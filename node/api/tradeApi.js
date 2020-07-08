@@ -261,7 +261,7 @@ router.post('/finishBusiness', async (ctx, next) => {
 
     let resttime = targetTransport.totaltime - parseInt((+new Date() - targetTransport.starttime) / 1000);
     if (resttime <= 0) {
-        gold = (10 + +targetTransport.class * 10 + +targetTransport.level);
+        gold = (10 + +targetTransport.class * 30 + +targetTransport.level);
         let targetUser = await Game_user.findOne({
             where: {
                 account: ctx.request.body.account
