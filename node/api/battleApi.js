@@ -181,6 +181,107 @@ router.post('/createNewBattle', async (ctx, next) => {
     };
 });
 
+// 一键派遣战队
+router.post('/onceCreateBattle', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
+    ctx.log.info();
+
+    await next();
+
+    let battleList = await Game_battlewar.findAll({
+        where:{
+            belongsto: ctx.request.body.account,
+            isbusy: 0
+        }
+    });
+
+    let targetList =[];
+    for(var i=0;i<battleList.length;i++){
+        let obj = {
+            belongsto: battleList[i].belongsto,
+            name: battleList[i].name,
+            level: battleList[i].level,
+            class: battleList[i].class,
+            basebattle: battleList[i].basebattle,
+            isbusy: 1,
+            targetwar: '',
+            starttime: +new Date(),
+            totaltime: 3*60*60,
+            isbuiedmoney: battleList[i].isbuiedmoney,
+            id: battleList[i].id
+        };
+        targetList.push(obj);
+    }
+    await Game_battlewar.bulkCreate(targetList,{updateOnDuplicate:['isbusy','starttime','totaltime']});
+
+    ctx.response.body = {
+        code: 200,
+        message: '派遣成功',
+        data: ''
+    };
+});
+
+// 一键收货战队
+router.post('/onceFinishBattle', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
+    ctx.log.info();
+
+    await next();
+
+    let battleList = await Game_battlewar.findAll({
+        where:{
+            belongsto: ctx.request.body.account,
+            isbusy: 1
+        }
+    });
+
+    let totalgemstone = 0;
+    let targetBattleList = [];
+    for(var i=0; i < battleList.length;i++){
+        let resttime = battleList[i].totaltime - parseInt((+new Date() - battleList[i].starttime) / 1000);
+        if (resttime <= 0) {
+            totalgemstone = totalgemstone + battleList[i].class * 1;
+
+            let obj = {
+                belongsto: battleList[i].belongsto,
+                name: battleList[i].name,
+                level: battleList[i].level,
+                class: battleList[i].class,
+                basebattle: battleList[i].basebattle,
+                isbusy: 0,
+                targetwar: '',
+                starttime: 0,
+                totaltime: 0,
+                isbuiedmoney: battleList[i].isbuiedmoney,
+                id: battleList[i].id
+            };
+            targetBattleList.push(obj);
+        }
+    }
+
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: ctx.request.body.account
+        }
+    });
+
+    targetUser.gemstone = +targetUser.gemstone + totalgemstone;
+
+    await targetUser.save();
+
+    await Game_battlewar.bulkCreate(targetBattleList,{updateOnDuplicate:['isbusy','starttime','totaltime']});
+
+    ctx.response.body = {
+        code: 200,
+        message: '成功',
+        data: totalgemstone
+    };
+});
+
 // 完成副本
 router.post('/finishBattle', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
@@ -302,6 +403,7 @@ router.post('/battleUpClass', async (ctx, next) => {
     };
 });
 
+
 router.post('/updateTradeList', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
@@ -345,6 +447,5 @@ router.post('/updateTradeList', async (ctx, next) => {
         data: targetUser
     };
 });
-
 
 module.exports = router;

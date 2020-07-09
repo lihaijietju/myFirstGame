@@ -293,6 +293,110 @@ router.post('/finishBusiness', async (ctx, next) => {
 
 });
 
+
+// 一键派遣商队
+router.post('/onceCreateBusiness', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
+    ctx.log.info();
+
+    await next();
+
+    let transportList = await Game_trsnsporter.findAll({
+        where:{
+            belongsto: ctx.request.body.account,
+            isBusy: 0
+        }
+    });
+
+    let targetList =[];
+    for(var i=0;i<transportList.length;i++){
+        let obj = {
+            belongsto: transportList[i].belongsto,
+            name: transportList[i].name,
+            level: transportList[i].level,
+            class: transportList[i].class,
+            baseweight: transportList[i].baseweight,
+            isBusy: 1,
+            targetcity: '',
+            starttime: +new Date(),
+            totaltime: 60 * 60,
+            isbuiedmoney: transportList[i].isbuiedmoney,
+            id: transportList[i].id
+        };
+        targetList.push(obj);
+    }
+    await Game_trsnsporter.bulkCreate(targetList,{updateOnDuplicate:['isBusy','starttime','totaltime']});
+    ctx.response.body = {
+        code: 200,
+        message: '成功',
+        data: ''
+    };
+});
+
+// 一键收货
+router.post('/onceFinishBusiness', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
+    ctx.log.info();
+
+    await next();
+
+    let totalGold = 0;
+
+    let transportList = await Game_trsnsporter.findAll({
+        where:{
+            belongsto: ctx.request.body.account,
+            isBusy: 1
+        }
+    });
+
+    let targetTransList = [];
+    for(var i=0; i<transportList.length;i++){
+        let resttime = transportList[i].totaltime - parseInt((+new Date() - transportList[i].starttime) / 1000);
+        if (resttime <= 0) {
+            gold = (10 + +transportList[i].class * 30 + +transportList[i].level);
+
+            let obj = {
+                belongsto: transportList[i].belongsto,
+                name: transportList[i].name,
+                level: transportList[i].level,
+                class: transportList[i].class,
+                baseweight: transportList[i].baseweight,
+                isBusy: 0,
+                targetcity: '',
+                starttime: 0,
+                totaltime: 0,
+                isbuiedmoney: transportList[i].isbuiedmoney,
+                id: transportList[i].id
+            };
+            targetTransList.push(obj);
+
+            totalGold = totalGold + gold;
+        }
+    }
+
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: ctx.request.body.account
+        }
+    });
+
+    targetUser.gold = +targetUser.gold + totalGold;
+
+    await targetUser.save();
+    await Game_trsnsporter.bulkCreate(targetTransList,{updateOnDuplicate:['isBusy','starttime','totaltime']});
+
+    ctx.response.body = {
+        code: 200,
+        message: '成功',
+        data: totalGold
+    };
+});
+
+
 // 批量更新贸易战队
 router.post('/updateTradeList', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
