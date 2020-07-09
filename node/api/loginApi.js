@@ -106,7 +106,7 @@ router.get('/loginGame', async (ctx, next) => {
 
 router.get('/getGameNotice', async (ctx, next) => {
 
-    let gameNotice = "1、重要公告:如果发现自己号被人使用\n可以加入qq群私聊群主给改密码\n2、修复新建号背包物品数量NAN问题\n3、修复钻石数量用完不更新问题\n4、修复部分页面点击穿透问题";
+    let gameNotice = "1、修复进装备副本偶尔卡顿问题\n2、商队战队增加一键派遣、一键收货功能\n3、无尽试炼扣次数改为成功之后，\n      并增加10s跳过功能\n4、修复内视偶尔无法看到属性问题";
     ctx.response.body = {
         code: 200,
         message: '成功',
