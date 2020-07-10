@@ -418,7 +418,7 @@ router.post('/battleUpClass', async (ctx, next) => {
     if(targetBattle.class *10 >= targetBattle.level){
         ctx.response.body = {
             code: 400,
-            message: '战队等级不足无法升级,请升级商队'
+            message: '战队阶位不足无法升级,请升阶战队'
         };
         return;
     }
