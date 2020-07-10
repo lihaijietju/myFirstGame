@@ -1,0 +1,328 @@
+
+let resourceList=[{
+	needWoods:26,
+	rate:1,
+	level:0
+},{
+	needWoods:86,
+	rate:2,
+	level:0
+},{
+	needWoods:346,
+	rate:4,
+	level:0
+},{
+	needWoods:1814,
+	rate:7,
+	level:0
+},{
+	needWoods:2376,
+	rate:11,
+	level:0
+},{
+	needWoods:4424,
+	rate:16,
+	level:0
+},{
+	needWoods:7603,
+	rate:22,
+	level:0
+},{
+	needWoods:11025,
+	rate:29,
+	level:0
+},{
+	needWoods:15345,
+	rate:37,
+	level:0
+},{
+	needWoods:20667,
+	rate:46,
+	level:0
+},{
+	needWoods:43131,
+	rate:60,
+	level:0
+},{
+	needWoods:50409,
+	rate:66,
+	level:0
+},{
+	needWoods:55450,
+	rate:73,
+	level:0
+},{
+	needWoods:64583,
+	rate:80,
+	level:0
+},{
+	needWoods:74988,
+	rate:88,
+	level:0
+},{
+	needWoods:91170,
+	rate:97,
+	level:0
+},{
+	needWoods:105062,
+	rate:106,
+	level:0
+},{
+	needWoods:120822,
+	rate:117,
+	level:0
+},{
+	needWoods:138682,
+	rate:129,
+	level:0
+},{
+	needWoods:158907,
+	rate:141,
+	level:0
+},{
+	needWoods:298598,
+	rate:180,
+	level:0
+},{
+	needWoods:342642,
+	rate:194,
+	level:0
+},{
+	needWoods:370053,
+	rate:210,
+	level:0
+},{
+	needWoods:423166,
+	rate:227,
+	level:0
+},{
+	needWoods:482410,
+	rate:245,
+	level:0
+},{
+	needWoods:575845,
+	rate:264,
+	level:0
+},{
+	needWoods:651527,
+	rate:286,
+	level:0
+},{
+	needWoods:735634,
+	rate:308,
+	level:0
+},{
+	needWoods:829027,
+	rate:333,
+	level:0
+},{
+	needWoods:932656,
+	rate:360,
+	level:0
+},{
+	needWoods:2211840,
+	rate:400,
+	level:0
+},{
+	needWoods:2514586,
+	rate:428,
+	level:0
+},{
+	needWoods:2690607,
+	rate:458,
+	level:0
+},{
+	needWoods:3048299,
+	rate:490,
+	level:0
+},{
+	needWoods:3442884,
+	rate:524,
+	level:0
+},{
+	needWoods:4071664,
+	rate:561,
+	level:0
+},{
+	needWoods:4564141,
+	rate:600,
+	level:0
+},{
+	needWoods:5105614,
+	rate:642,
+	level:0
+},{
+	needWoods:5700529,
+	rate:687,
+	level:0
+},{
+	needWoods:6353715,
+	rate:735,
+	level:0
+},{
+	needWoods:9400320,
+	rate:850,
+	level:50
+},{
+	needWoods:10786867,
+	rate:918,
+	level:52
+},{
+	needWoods:11649817,
+	rate:991,
+	level:54
+},{
+	needWoods:13321908,
+	rate:1071,
+	level:56
+},{
+	needWoods:15186975,
+	rate:1156,
+	level:58
+},{
+	needWoods:18128452,
+	rate:1249,
+	level:60
+},{
+	needWoods:20511049,
+	rate:1349,
+	level:62
+},{
+	needWoods:23158839,
+	rate:1457,
+	level:64
+},{
+	needWoods:26099004,
+	rate:1573,
+	level:66
+},{
+	needWoods:29361380,
+	rate:1699,
+	level:68
+},{
+	needWoods:35389440,
+	rate:2000,
+	level:70
+},{
+	needWoods:40985395,
+	rate:2180,
+	level:72
+},{
+	needWoods:44674081,
+	rate:2376,
+	level:74
+},{
+	needWoods:51559145,
+	rate:2590,
+	level:76
+},{
+	needWoods:59321661,
+	rate:2823,
+	level:78
+},{
+	needWoods:71466990,
+	rate:3077,
+	level:80
+},{
+	needWoods:81608496,
+	rate:3354,
+	level:82
+},{
+	needWoods:92996591,
+	rate:3656,
+	level:84
+},{
+	needWoods:105773514,
+	rate:3985,
+	level:86
+},{
+	needWoods:120097011,
+	rate:4344,
+	level:88
+},{
+	needWoods:120097011,
+	rate:4344,
+	level:88
+},{
+	needWoods:132710400,
+	rate:5000,
+	level:90
+},{
+	needWoods:155105280,
+	rate:5500,
+	level:92
+},{
+	needWoods:170615808,
+	rate:6050,
+	level:94
+},{
+	needWoods:198717235,
+	rate:6655,
+	level:96
+},{
+	needWoods:230732790,
+	rate:7321,
+	level:98
+},{
+	needWoods:280522497,
+	rate:8053,
+	level:100
+},{
+	needWoods:323268782,
+	rate:8858,
+	level:102
+},{
+	needWoods:371759100,
+	rate:9744,
+	level:104
+},{
+	needWoods:426714793,
+	rate:10718,
+	level:106
+},{
+	needWoods:488944033,
+	rate:11790,
+	level:108
+},{
+	needWoods:466126645,
+	rate:12969,
+	level:110
+},{
+	needWoods:544785516,
+	rate:14266,
+	level:112
+},{
+	needWoods:599264068,
+	rate:15692,
+	level:114
+},{
+	needWoods:697966385,
+	rate:17261,
+	level:116
+},{
+	needWoods:810416525,
+	rate:18987,
+	level:118
+},{
+	needWoods:1172971286,
+	rate:20886,
+	level:120
+},{
+	needWoods:1425340800,
+	rate:23500,
+	level:122
+},{
+	needWoods:1693785600,
+	rate:26000,
+	level:124
+},{
+	needWoods:1984694400,
+	rate:28500,
+	level:126
+},{
+	needWoods:2506982400,
+	rate:31000,
+	level:128
+}];
+
+module.exports = resourceList;

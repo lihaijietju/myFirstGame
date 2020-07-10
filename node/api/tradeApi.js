@@ -5,6 +5,7 @@ const Game_user = require('../model/Game_user');
 const Game_line = require('../model/Game_line');
 const Game_trsnsporter = require('../model/Game_trsnsporter');
 const utility = require("utility");
+const resourceuplevel = require('../data/resourceuplevel');
 
 
 // 获取商队列表
@@ -45,35 +46,6 @@ router.get('/getTransportList', async (ctx, next) => {
 
 });
 
-// 获取贸易线列表
-router.get('/getCityLines', async (ctx, next) => {
-    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
-        return;
-    }
-    await next();
-    // 查询数据
-    let targetLines = await Game_line.findAll({
-        where: {
-            belongsto: ctx.query.account,
-        }
-    });
-
-    let params = [];
-    for (let i = 0; i < targetLines.length; i++) {
-        params.push({
-            targetCity: targetLines[i].targetcity,
-            level: targetLines[i].level,
-            belongsto: targetLines[i].belongsto
-        });
-    }
-    ctx.response.body = {
-        code: 200,
-        message: '成功',
-        data: params
-    };
-
-});
-
 // 升级商队
 router.post('/transportUplevel', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
@@ -93,11 +65,28 @@ router.post('/transportUplevel', async (ctx, next) => {
             account: ctx.request.body.account
         }
     });
-    if (+targetUser.tiekuang >= +ctx.request.body.resourceAmount && +targetUser.liangshi >= +ctx.request.body.resourceAmount && +targetUser.caoyao >= +ctx.request.body.resourceAmount && +targetUser.woods >= +ctx.request.body.resourceAmount) {
-        targetUser.tiekuang = targetUser.tiekuang - ctx.request.body.resourceAmount;
-        targetUser.liangshi = targetUser.liangshi - ctx.request.body.resourceAmount;
-        targetUser.caoyao = targetUser.caoyao - ctx.request.body.resourceAmount;
-        targetUser.woods = targetUser.woods - ctx.request.body.resourceAmount;
+    console.log(targetTransport.level)
+
+    if(+targetTransport.level >= +targetTransport.class*10){
+        ctx.response.body = {
+            code: 400,
+            message: '商队品质不足，请升阶商队'
+        };
+        return;
+    }
+
+    let resourceAmount = +resourceuplevel[targetTransport.level-1].needWoods;
+
+    if(+targetUser.tiekuang >= resourceAmount
+        && +targetUser.liangshi >= parseInt(resourceAmount*1.5)
+        && +targetUser.caoyao >= resourceAmount
+        && +targetUser.woods >= parseInt(resourceAmount*0.5)){
+
+        targetUser.tiekuang = targetUser.tiekuang - resourceAmount;
+        targetUser.liangshi = targetUser.liangshi - parseInt(resourceAmount*1.5);
+        targetUser.caoyao = targetUser.caoyao - resourceAmount;
+        targetUser.woods = targetUser.woods - parseInt(resourceAmount*0.5);
+
 
         targetTransport.level = +targetTransport.level + 1;
         await targetTransport.save();
@@ -110,12 +99,12 @@ router.post('/transportUplevel', async (ctx, next) => {
     } else {
         ctx.response.body = {
             code: 400,
-            message: '失败'
+            message: '资源不足'
         };
     }
 });
 
-// 升阶商队
+// 升阶商队 升阶需要对应等级满
 router.post('/transportUpclass', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
@@ -128,11 +117,45 @@ router.post('/transportUpclass', async (ctx, next) => {
             id: ctx.request.body.id
         }
     });
-    if (targetTransport.class < 8) {
-        targetTransport.class = +targetTransport.class + 1;
-        targetTransport.level = 1;
+
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: ctx.request.body.account
+        }
+    });
+
+    // 等级不足
+    if(targetTransport.class *10 > targetTransport.level){
+        ctx.response.body = {
+            code: 400,
+            message: '商队等级不足无法升级,请升级商队'
+        };
+        return;
     }
-    targetTransport.save();
+
+    // 满阶
+    if(targetTransport.class >= 8){
+        ctx.response.body = {
+            code: 400,
+            message: '商队已满阶，无法升阶'
+        };
+        return;
+    }
+
+    let needGemstone = targetTransport.class*100;
+    if(needGemstone > targetUser.gemstone){
+        ctx.response.body = {
+            code: 400,
+            message: '升阶需要钻石'+needGemstone+'，钻石不足无法升阶'
+        };
+        return;
+    }
+
+    targetUser.gemstone = targetUser.gemstone - needGemstone;
+    targetTransport.class = +targetTransport.class + 1;
+
+    await targetUser.save();
+    await targetTransport.save();
 
     ctx.response.body = {
         code: 200,

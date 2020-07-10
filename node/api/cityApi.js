@@ -10,6 +10,7 @@ const utility = require("utility");
 const util = require('../util/util');
 
 const experience = require('../data/experience');
+const resourceuplevel = require('../data/resourceuplevel');
 
 
 // 获取用户账号信息
@@ -175,10 +176,11 @@ router.get('/getUserInfo', async (ctx, next) => {
         if(updateTimes < 1){
             params = targetUser;
         } else {
-            targetUser.tiekuang = +targetUser.tiekuang + +targetUser.tiekuangrate * (updateTimes || 0);
-            targetUser.liangshi = +targetUser.liangshi + +targetUser.liangshirate * (updateTimes || 0);
-            targetUser.caoyao = +targetUser.caoyao + +targetUser.caoyaorate * (updateTimes || 0);
-            targetUser.woods = +targetUser.woods + +targetUser.woodsrate * (updateTimes || 0);
+            // 资源更新
+            targetUser.tiekuang = +targetUser.tiekuang + +resourceuplevel[+targetUser.tiekuangrate-1].rate * (updateTimes || 0);
+            targetUser.liangshi = +targetUser.liangshi + +resourceuplevel[targetUser.liangshirate-1].rate * (updateTimes || 0);
+            targetUser.caoyao = +targetUser.caoyao + +resourceuplevel[targetUser.caoyaorate-1].rate * (updateTimes || 0);
+            targetUser.woods = +targetUser.woods + +resourceuplevel[targetUser.woodsrate-1].rate * (updateTimes || 0);
 
             let expRate = Math.pow(1.2, targetUser.currentbattlelevel - 1) * 100;
             targetUser.gold = +targetUser.gold + +parseInt(Math.pow(1.2, targetUser.currentbattlelevel - 1) * (updateTimes || 1) / 10);
@@ -209,6 +211,7 @@ router.get('/getUserInfo', async (ctx, next) => {
 
 });
 
+// 更新资源(每5s)
 router.post('/getUpdateSource', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
@@ -235,10 +238,10 @@ router.post('/getUpdateSource', async (ctx, next) => {
         return;
     }
 
-    targetUser.tiekuang = +targetUser.tiekuang + +targetUser.tiekuangrate;
-    targetUser.liangshi = +targetUser.liangshi + +targetUser.liangshirate;
-    targetUser.caoyao = +targetUser.caoyao + +targetUser.caoyaorate;
-    targetUser.woods = +targetUser.woods + +targetUser.woodsrate;
+    targetUser.tiekuang = +targetUser.tiekuang + +resourceuplevel[+targetUser.tiekuangrate-1].rate * (updateTimes || 0);
+    targetUser.liangshi = +targetUser.liangshi + +resourceuplevel[targetUser.liangshirate-1].rate * (updateTimes || 0);
+    targetUser.caoyao = +targetUser.caoyao + +resourceuplevel[targetUser.caoyaorate-1].rate * (updateTimes || 0);
+    targetUser.woods = +targetUser.woods + +resourceuplevel[targetUser.woodsrate-1].rate * (updateTimes || 0);
 
     let expRate = Math.pow(1.2, targetUser.currentbattlelevel - 1) * 100;
     targetUser.gold = +targetUser.gold + +parseInt(Math.pow(1.2, targetUser.currentbattlelevel - 1) / 10);
@@ -267,44 +270,6 @@ router.post('/getUpdateSource', async (ctx, next) => {
 
 });
 
-// 更新资源信息(旧)
-router.post('/updateResource', async (ctx, next) => {
-    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
-        return;
-    }
-    ctx.log.info();
-
-    await next();
-    // 查询数据
-    let targetUser = await Game_user.findOne({
-        where: {
-            account: ctx.request.body.account,
-        }
-    });
-
-    targetUser.tiekuang = ctx.request.body.tiekuang;
-    targetUser.tiejing = ctx.request.body.tiejing;
-    targetUser.liangshi = ctx.request.body.liangshi;
-    targetUser.shengwang = ctx.request.body.shengwang;
-    targetUser.caoyao = ctx.request.body.caoyao;
-    targetUser.woods = ctx.request.body.woods;
-    targetUser.exp = ctx.request.body.exp;
-    targetUser.totalexp = ctx.request.body.totalexp;
-    targetUser.level = ctx.request.body.level;
-    targetUser.currentbattlelevel = ctx.request.body.currentbattlelevel;
-    targetUser.updatetime = Date.now();
-
-    targetUser.gold = ctx.request.body.gold;
-    targetUser.xianyuancips = ctx.request.body.xianyuancips;
-
-    await targetUser.save();
-
-    ctx.response.body = {
-        code: 200,
-        message: '成功'
-    };
-
-});
 
 // 更新仙缘信息
 router.post('/updateGemstone', async (ctx, next) => {
@@ -330,6 +295,7 @@ router.post('/updateGemstone', async (ctx, next) => {
     };
 
 });
+
 // 获取资源田信息
 router.get('/getResourceInfo', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.query.account)) {
@@ -344,11 +310,21 @@ router.get('/getResourceInfo', async (ctx, next) => {
             belongs: ctx.query.account,
         }
     });
-
+    let targetList = [];
+    for(let i=0;i<targetResourceList.length;i++){
+        let obj = {
+            id:targetResourceList[i].id,
+            name:targetResourceList[i].name,
+            belongs:targetResourceList[i].belongs,
+            level:targetResourceList[i].level
+        }
+        Object.assign(obj,resourceuplevel[+targetResourceList[i].level-1]);
+        targetList.push(obj);
+    }
     ctx.response.body = {
         code: 200,
         message: '成功',
-        data: targetResourceList
+        data: targetList
     };
 
 });
@@ -424,8 +400,6 @@ async function batchCreateEquips(updateTimes,targetUser){
 
 
 // 升级资源田信息
-
-
 router.post('/upResourceLevel', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
@@ -446,23 +420,23 @@ router.post('/upResourceLevel', async (ctx, next) => {
         }
     });
 
-    let needWoods = 0;
-
-    if (+targetResource.level <= 30) {
-        needWoods = parseInt(Math.pow(1.5, +targetResource.level - 1));
-    } else if (+targetResource.level <= 50) {
-        needWoods = 300000;
-    } else {
-        needWoods = 500000;
+    if(targetUser.level < resourceuplevel[+targetResource.level-1].level){
+        ctx.response.body = {
+            code: 500,
+            message: '等级不足,请提升等级'
+        };
+        return;
     }
 
-    if (10 * needWoods > +targetUser.woods) {
+    let needWoods = resourceuplevel[+targetResource.level-1].needWoods;
+
+    if (needWoods > +targetUser.woods) {
         ctx.response.body = {
             code: 500,
             message: '木材资源不足'
         };
     } else {
-        targetUser.woods = (+targetUser.woods) - 10 * needWoods;
+        targetUser.woods = (+targetUser.woods) - needWoods;
         targetResource.level = +targetResource.level + 1;
         targetUser[ctx.request.body.type + 'rate'] = targetResource.level;
         await targetUser.save();
