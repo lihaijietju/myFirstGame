@@ -106,7 +106,7 @@ router.get('/loginGame', async (ctx, next) => {
 
 router.get('/getGameNotice', async (ctx, next) => {
 
-    let gameNotice = "1、修复进装备副本偶尔卡顿问题\n2、商队战队增加一键派遣、一键收货功能\n3、无尽试炼扣次数改为成功之后，\n      并增加10s跳过功能\n4、修复内视偶尔无法看到属性问题";
+    let gameNotice = "重新设计资源与商队战队体系，\n大幅提高资源产量\n请加入QQ群795582916获取新版";
     ctx.response.body = {
         code: 200,
         message: '成功',
