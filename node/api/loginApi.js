@@ -64,7 +64,6 @@ router.get('/loginGame', async (ctx, next) => {
     if (targetAccount.length > 0) {
         for (let i = 0; i < targetAccount.length; i++) {
             if (ctx.query.password === targetAccount[i].password) {
-                console.log(targetAccount[i].isdanger, '========');
                 if(+targetAccount[i].isdanger) {
                     isdanger = true;
                 } else {
@@ -73,6 +72,26 @@ router.get('/loginGame', async (ctx, next) => {
             }
         }
     } else {
+        var accountReg = new RegExp(/^[a-zA-Z0-9]{1,20}$/);
+        if(!accountReg.test(ctx.query.account)){
+            ctx.response.body = {
+                code: 400,
+                message: '账号只能为1~20位的数字与字母组合'
+            };
+            return;
+        }
+
+        var passwordReg = new RegExp(/^[a-zA-Z0-9]{1,20}$/);
+
+        if(!passwordReg.test(ctx.query.password)){
+            ctx.response.body = {
+                code: 400,
+                message: '密码只能为1~20位的数字与字母组合'
+            };
+            return;
+        }
+
+
         await Game_account.create({
             account: ctx.query.account,
             password: ctx.query.password,

@@ -34,7 +34,8 @@ router.get('/getTransportList', async (ctx, next) => {
             targetcity: targetTransporter[i].targetcity,
             starttime: targetTransporter[i].starttime,
             totaltime: targetTransporter[i].totaltime,
-            isbuiedmoney: targetTransporter[i].isbuiedmoney
+            isbuiedmoney: targetTransporter[i].isbuiedmoney,
+            resourceAmount: resourceuplevel[targetTransporter[i].level-1].needWoods
         });
     }
 

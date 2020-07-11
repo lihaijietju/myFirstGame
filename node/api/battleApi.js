@@ -61,7 +61,8 @@ router.get('/battleWarList', async (ctx, next) => {
             targetwar: targetBattleList[i].targetwar,
             starttime: targetBattleList[i].starttime,
             totaltime: targetBattleList[i].totaltime,
-            isbuiedmoney: targetBattleList[i].isbuiedmoney
+            isbuiedmoney: targetBattleList[i].isbuiedmoney,
+            resourceAmount:+resourceuplevel[targetBattleList[i].level-1].needWoods
         });
     }
 
