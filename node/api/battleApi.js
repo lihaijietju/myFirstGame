@@ -415,7 +415,7 @@ router.post('/battleUpClass', async (ctx, next) => {
     });
 
     // 等级不足
-    if(targetBattle.class *10 >= targetBattle.level){
+    if(+targetBattle.class *10 >= +targetBattle.level){
         ctx.response.body = {
             code: 400,
             message: '战队阶位不足无法升级,请升阶战队'
@@ -431,8 +431,15 @@ router.post('/battleUpClass', async (ctx, next) => {
         };
         return;
     }
-
     let needGemstone = targetBattle.class*100;
+
+    if(targetBattle.class > 3){
+        needGemstone = 500;
+    }
+    if(targetBattle.class > 5){
+        needGemstone = 1000;
+    }
+
     if(needGemstone > targetUser.gemstone){
         ctx.response.body = {
             code: 400,

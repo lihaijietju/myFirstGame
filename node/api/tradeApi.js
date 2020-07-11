@@ -65,7 +65,6 @@ router.post('/transportUplevel', async (ctx, next) => {
             account: ctx.request.body.account
         }
     });
-    console.log(targetTransport.level)
 
     if(+targetTransport.level >= +targetTransport.class*10){
         ctx.response.body = {
@@ -143,6 +142,14 @@ router.post('/transportUpclass', async (ctx, next) => {
     }
 
     let needGemstone = targetTransport.class*100;
+
+    if(targetTransport.class > 3){
+        needGemstone = 500;
+    }
+    if(targetTransport.class > 5){
+        needGemstone = 1000;
+    }
+
     if(needGemstone > targetUser.gemstone){
         ctx.response.body = {
             code: 400,
