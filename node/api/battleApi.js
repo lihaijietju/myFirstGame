@@ -379,7 +379,7 @@ router.post('/battleUplevel', async (ctx, next) => {
         }
     });
 
-    if(targetBattle.level > targetBattle.class*10){
+    if(+targetBattle.level >= +targetBattle.class*10){
         ctx.response.body = {
             code: 400,
             message: '战队品质不足，请升阶战队'

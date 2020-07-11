@@ -7,7 +7,6 @@ const Game_trsnsporter = require('../model/Game_trsnsporter');
 const utility = require("utility");
 const resourceuplevel = require('../data/resourceuplevel');
 
-
 // 获取商队列表
 router.get('/getTransportList', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.query.account)) {
