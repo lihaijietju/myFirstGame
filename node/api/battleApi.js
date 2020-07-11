@@ -73,6 +73,29 @@ router.get('/battleWarList', async (ctx, next) => {
     };
 });
 
+router.get('/getBattleWarRank', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
+        return;
+    }
+    ctx.log.info();
+
+    await next();
+    // 查询数据
+    let targetBattleList = await Game_battlewar.findAll({
+        limit:50,
+        'order': [
+            ['class', 'DESC'],
+            ['level', 'DESC']
+        ]
+    });
+
+    ctx.response.body = {
+        code: 200,
+        message: '成功',
+        data: targetBattleList
+    };
+});
+
 // 创建新战队
 router.post('/addNewBattleWar', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {

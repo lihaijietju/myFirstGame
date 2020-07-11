@@ -29,6 +29,29 @@ router.get('/getUserList', async (ctx, next) => {
     };
 });
 
+
+router.get('/getUserListByLevel', async (ctx, next) => {
+    ctx.log.info();
+
+    await next();
+    // 查询数据
+    let userList = await Game_user.findAll({
+        where: {
+            isdanger: 0
+        },
+        limit:50,
+        'order': [
+            ['level', 'DESC']
+        ]
+    });
+
+    ctx.response.body = {
+        code: 200,
+        message: '成功',
+        data: userList
+    };
+});
+
 // 获取装备列表
 router.get('/getEquipmentList', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.query.account)) {

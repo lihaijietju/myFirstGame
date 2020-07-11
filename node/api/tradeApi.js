@@ -47,6 +47,29 @@ router.get('/getTransportList', async (ctx, next) => {
 
 });
 
+// 获取商队列表排行
+router.get('/getTradeRank', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
+        return;
+    }
+    await next();
+    // 查询数据
+    let transportList = await Game_trsnsporter.findAll({
+        limit:50,
+        'order': [
+            ['class', 'DESC'],
+            ['level', 'DESC']
+        ]
+    });
+
+    ctx.response.body = {
+        code: 200,
+        message: '成功',
+        data: transportList
+    };
+
+});
+
 // 升级商队
 router.post('/transportUplevel', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
