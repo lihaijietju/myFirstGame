@@ -150,7 +150,7 @@ router.post('/transportUpclass', async (ctx, next) => {
     if(targetTransport.class *10 > targetTransport.level){
         ctx.response.body = {
             code: 400,
-            message: '商队等级不足无法升级,请升级商队'
+            message: '商队等级不足无法升阶,请升级商队'
         };
         return;
     }
