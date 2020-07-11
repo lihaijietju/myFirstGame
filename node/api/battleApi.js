@@ -89,6 +89,32 @@ router.get('/getBattleWarRank', async (ctx, next) => {
         ]
     });
 
+
+    // 需要查询的账号信息
+    let accountList =[];
+    for(let i=0;i<targetBattleList.length;i++){
+        if(accountList.indexOf(targetBattleList[i].belongsto)===-1){
+            accountList.push(targetBattleList[i].belongsto);
+        }
+    }
+
+    let targetUserList = await Game_user.findAll({
+        attributes:['account','username'],
+        where:{},
+        account: {
+            $in: accountList
+        }
+    });
+
+    let nameAccountMap={};
+    for(let j=0;j<targetUserList.length;j++){
+        nameAccountMap[targetUserList[j].account] = targetUserList[j].username;
+    }
+
+    for(let i=0;i<targetBattleList.length;i++){
+        targetBattleList[i].belongsto = nameAccountMap[targetBattleList[i].belongsto];
+    }
+
     ctx.response.body = {
         code: 200,
         message: '成功',

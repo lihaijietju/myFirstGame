@@ -61,6 +61,31 @@ router.get('/getTradeRank', async (ctx, next) => {
         ]
     });
 
+    // 需要查询的账号信息
+    let accountList =[];
+    for(let i=0;i<transportList.length;i++){
+        if(accountList.indexOf(transportList[i].belongsto)===-1){
+            accountList.push(transportList[i].belongsto);
+        }
+    }
+
+    let targetUserList = await Game_user.findAll({
+        attributes:['account','username'],
+        where:{},
+        account: {
+            $in: accountList
+        }
+    });
+
+    let nameAccountMap={};
+    for(let j=0;j<targetUserList.length;j++){
+        nameAccountMap[targetUserList[j].account] = targetUserList[j].username;
+    }
+
+    for(let i=0;i<transportList.length;i++){
+        transportList[i].belongsto = nameAccountMap[transportList[i].belongsto];
+    }
+
     ctx.response.body = {
         code: 200,
         message: '成功',
