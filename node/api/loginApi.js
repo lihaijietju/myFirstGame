@@ -125,7 +125,7 @@ router.get('/loginGame', async (ctx, next) => {
 
 router.get('/getGameNotice', async (ctx, next) => {
 
-    let gameNotice = "重新设计资源与商队战队体系，\n大幅提高资源产量\n请加入QQ群795582916获取新版";
+    let gameNotice = "1、商队战队增加升级升阶资源提示\n2、注册账号增加校验，非字母数字无法注册\n3、提高离线挂机获取装备等级\n4、新增等级，商队，战队排行榜\n请加入QQ群795582916获取新版";
     ctx.response.body = {
         code: 200,
         message: '成功',
