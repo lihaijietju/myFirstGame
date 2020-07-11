@@ -330,6 +330,7 @@ router.get('/getResourceInfo', async (ctx, next) => {
 });
 
 
+// 批量创建装备
 async function batchCreateEquips(updateTimes,targetUser){
 
     // 进行装备创建
@@ -361,7 +362,14 @@ async function batchCreateEquips(updateTimes,targetUser){
             }
             equipObj.belongs = targetUser.account;
             equipObj.id = +new Date() + i;
-            equipObj.level = randomNum(1, +targetUser.level);
+
+            let level = +targetUser.level;
+            if(level <= 10){
+                level = 1;
+            } else {
+                level = +targetUser.level - 10;
+            }
+            equipObj.level = randomNum(level, +targetUser.level);
 
             equipObj.stronglevel = 0;
             equipObj.ison = 0;
