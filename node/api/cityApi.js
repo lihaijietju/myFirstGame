@@ -211,6 +211,68 @@ router.get('/getUserInfo', async (ctx, next) => {
 
 });
 
+router.get('/getOfflineResource', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
+        return;
+    }
+    ctx.log.info();
+
+    await next();
+    // 查询数据
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: ctx.query.account,
+        }
+    });
+    let params = {};
+
+    if (!targetUser) {
+        ctx.response.body = {
+            code: 400,
+            message: '未能找到离线玩家',
+            data: params,
+            nowTime: Date.now()
+        };
+        return;
+
+    } else {
+        // 查到用户进行数据更新
+        let updateTimes = (parseInt((Date.now() - targetUser.updatetime) / 1000 / 6)) || 0;
+        // 超过6个小时之内获取六个小时的资源
+        if(updateTimes > 3600){
+            updateTimes = 3600;
+        }
+
+        let params ={
+            minute: parseInt(updateTimes * 6 / 60),
+            updateTimes: updateTimes,
+            tiekuang:resourceuplevel[+targetUser.tiekuangrate-1].rate * (updateTimes || 0),
+            liangshi:resourceuplevel[+targetUser.liangshirate-1].rate * (updateTimes || 0),
+            woods:resourceuplevel[+targetUser.woodsrate-1].rate * (updateTimes || 0),
+            caoyao:resourceuplevel[+targetUser.caoyaorate-1].rate * (updateTimes || 0),
+        };
+
+        let expRate = Math.pow(1.2, targetUser.currentbattlelevel - 1) * 100;
+        params.gold = parseInt(Math.pow(1.2, targetUser.currentbattlelevel - 1) * (updateTimes || 1) / 10);
+        params.exp = parseInt(targetUser.exprate * (updateTimes || 0) * expRate);
+
+        // 装备数量
+        if(updateTimes > 200){
+            // 随机获取这么多装备
+            params.equipAmount = parseInt(updateTimes / 600) + 1;
+        } else{
+            params.equipAmount = 0;
+        }
+
+        ctx.response.body = {
+            code: 200,
+            message: '成功',
+            data: params
+        };
+    }
+});
+
+
 // 更新资源(每5s)
 router.post('/getUpdateSource', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
@@ -252,7 +314,6 @@ router.post('/getUpdateSource', async (ctx, next) => {
 
     while (+currentExp >= +totalExp) {
         targetUser.level = +targetUser.level + 1;
-        console.log(targetUser.level)
         currentExp = parseInt(+currentExp - +totalExp);
         totalExp = experience[(targetUser.level-1)];
     }
