@@ -189,7 +189,7 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
         },
         limit:4
     });
-    console.log(Date.now()-time1,2);
+
     // 获取法宝属性
     targetEquipment.forEach((equipment) => {
         propertyInfo.strength = +propertyInfo.strength + +equipment.strength;
@@ -228,8 +228,6 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
     propertyInfo.gengu = +propertyInfo.gengu + +targetUser.gengu;
     propertyInfo.speed = +propertyInfo.speed + +targetUser.speed;
     propertyInfo.baoji = +propertyInfo.baoji + +targetUser.baoji;
-
-    console.log(Date.now()-time1,3);
 
     // 等级新增属性
     let property = 0;
@@ -291,17 +289,18 @@ router.post('/createLianqifang', async (ctx, next) => {
     });
     switch (ctx.request.body.type) {
         case '1':
-            if(ctx.request.body.amount === -1){
+            if(+ctx.request.body.amount === -1){
                 // 全部合成
-                let amount = parseInt(+targetUser.strongstoneclip/10);
+                let amount = parseInt((+targetUser.strongstoneclip)/10);
                 let remain = +targetUser.strongstoneclip - amount*10;
 
-                targetUser.strongstonenum = amount;
+                targetUser.strongstonenum = +targetUser.strongstonenum + amount;
                 targetUser.strongstoneclip = remain;
                 await targetUser.save();
                 ctx.response.body = {
                     code: 200,
-                    message: '强化石+'+ amount
+                    message: '强化石+'+ amount,
+                    remain:remain
                 };
             }else{
                 let amount = ctx.request.body.amount;
