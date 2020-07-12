@@ -64,7 +64,8 @@ router.get('/getEquipmentList', async (ctx, next) => {
     let equipmentList = await Game_equipment.findAll({
         where: {
             belongs: ctx.query.account
-        }
+        },
+        limit:5
     });
 
     ctx.response.body = {
@@ -162,11 +163,12 @@ router.post('/upClassEquipment', async (ctx, next) => {
     }
 });
 
-// 获取玩家属性
+// 获取玩家属性,较慢待优化
 router.get('/getUserPropertyInfo', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.query.account)) {
         return;
     }
+
     ctx.log.info();
 
     await next();
@@ -182,7 +184,8 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
     let targetEquipment = await Game_equipment.findAll({
         where: {
             belongs: ctx.query.account
-        }
+        },
+        limit:4
     });
     // 获取法宝属性
     targetEquipment.forEach((equipment) => {
@@ -241,7 +244,8 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
         where: {
             belongs: ctx.query.account,
             ison:1
-        }
+        },
+        limit:5
     });
     for(var j=0;j<targetEquip.length;j++){
         if(+targetEquip[j].type===1){
@@ -282,20 +286,38 @@ router.post('/createLianqifang', async (ctx, next) => {
     });
     switch (ctx.request.body.type) {
         case '1':
-            if (+targetUser.strongstoneclip >= 10) {
-                targetUser.strongstonenum = +targetUser.strongstonenum + 1;
-                targetUser.strongstoneclip = +targetUser.strongstoneclip - 10;
+            if(ctx.request.body.amount === -1){
+                // 全部合成
+                let amount = parseInt(+targetUser.strongstoneclip/10);
+                let remain = +targetUser.strongstoneclip - amount*10;
+
+                targetUser.strongstonenum = amount;
+                targetUser.strongstoneclip = remain;
                 await targetUser.save();
                 ctx.response.body = {
                     code: 200,
-                    message: '强化石+1'
+                    message: '强化石+'+ amount
                 };
-            } else {
-                ctx.response.body = {
-                    code: 500,
-                    message: '装备碎片不足'
-                };
+            }else{
+                let amount = ctx.request.body.amount;
+                amount = amount?amount:1;
+
+                if (+targetUser.strongstoneclip >= (amount * 10)) {
+                    targetUser.strongstonenum = +targetUser.strongstonenum + amount;
+                    targetUser.strongstoneclip = +targetUser.strongstoneclip - amount * 10;
+                    await targetUser.save();
+                    ctx.response.body = {
+                        code: 200,
+                        message: '强化石+'+ amount
+                    };
+                } else {
+                    ctx.response.body = {
+                        code: 500,
+                        message: '装备碎片不足'
+                    };
+                }
             }
+
             break;
         case '2':
             if (+targetUser.strongstoneclip >= 200) {
