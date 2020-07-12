@@ -444,7 +444,7 @@ async function batchCreateEquips(updateTimes,targetUser){
             }
 
             if (95 < randomNum4 && randomNum4 <= 98) {
-                equipObj.class = 5;
+                equipObj.class = 4;
             }
 
             if (90 < randomNum4 && randomNum4 <= 95) {

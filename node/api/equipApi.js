@@ -33,7 +33,7 @@ router.get('/getEquipList', async (ctx, next) => {
             type: ctx.query.equipmentType,
             ison: 0
         },
-        limit:15,
+        limit:10,
         order:[
             ['level','DESC'],
             ['class','DESC']
@@ -149,18 +149,59 @@ router.post('/destoryEquip', async (ctx, next) => {
     });
 
     if(originEquip){
-        targetUser.tiekuang = +targetUser.tiekuang + (+originEquip.class * 300);
-        targetUser.caoyao = +targetUser.caoyao + (+originEquip.class * 300);
-        targetUser.liangshi = +targetUser.liangshi + (+originEquip.class * 300);
-        targetUser.woods = +targetUser.woods + (+originEquip.class * 300);
-
+        targetUser.strongstoneclip = targetUser.strongstoneclip + +originEquip.class;
         await originEquip.destroy();
     }
 
     await targetUser.save();
     ctx.response.body = {
         code: 200,
-        message: '分解获得四类资源各'+(+originEquip.class * 300)
+        message: '分解共获得装备碎片'+ originEquip.class
+    };
+
+});
+
+router.post('/batchDestoryEquip', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
+    ctx.log.info();
+
+    await next();
+
+    // 找着玩家
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: ctx.request.body.account
+        }
+    });
+
+    // 查询数据
+    let targetEquip = await Game_equip.findAll({
+        where: {
+            belongs: ctx.request.body.account,
+            class: ctx.request.body.class,
+            ison:0
+        }
+    });
+
+    // 一共几件装备
+    let count = targetEquip.length;
+
+    await Game_equip.destroy({
+        where: {
+            belongs: ctx.request.body.account,
+            class: ctx.request.body.class,
+            ison:0
+        }
+    });
+
+    targetUser.strongstoneclip = targetUser.strongstoneclip + (count*ctx.request.body.class);
+
+    await targetUser.save();
+    ctx.response.body = {
+        code: 200,
+        message: '分解共获得装备碎片'+ (count*ctx.request.body.class)
     };
 
 });
