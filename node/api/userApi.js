@@ -165,9 +165,9 @@ router.post('/upClassEquipment', async (ctx, next) => {
 
 // 获取玩家属性,较慢待优化
 router.get('/getUserPropertyInfo', async (ctx, next) => {
-    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
-        return;
-    }
+    // if (ctx.headers.token !== utility.md5(ctx.query.account)) {
+    //     return;
+    // }
 
     ctx.log.info();
 
@@ -187,7 +187,7 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
         where: {
             belongs: ctx.query.account
         },
-        limit:4
+        limit:5
     });
 
     // 获取法宝属性
@@ -215,6 +215,7 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
         }
     });
 
+
     // 获取自身属性
     let targetUser = await Game_user.findOne({
         where: {
@@ -228,6 +229,7 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
     propertyInfo.gengu = +propertyInfo.gengu + +targetUser.gengu;
     propertyInfo.speed = +propertyInfo.speed + +targetUser.speed;
     propertyInfo.baoji = +propertyInfo.baoji + +targetUser.baoji;
+
 
     // 等级新增属性
     let property = 0;
@@ -267,6 +269,7 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
             propertyInfo.baoji = propertyInfo.baoji + (+targetEquip[j].property);
         }
     }
+
     ctx.response.body = {
         code: 200,
         message: '成功',

@@ -124,7 +124,9 @@ scheduleInitUserFlag();
 async function getUserList() {
     let userList = await Game_user.findAll();
     for (let i = 0; i < userList.length; i++) {
-        updateBattleValue(userList[i].account);
+        if(userList[i].account === '111'){
+            updateBattleValue(userList[i].account);
+        }
     }
 }
 
@@ -191,7 +193,6 @@ async function updateBattleValue(account) {
     propertyInfo.gengu = +propertyInfo.gengu + property;
     propertyInfo.speed = +propertyInfo.speed + property;
     propertyInfo.baoji = +propertyInfo.baoji + property;
-
 
     propertyInfo.battle =0;
 
