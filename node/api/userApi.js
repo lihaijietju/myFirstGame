@@ -309,9 +309,9 @@ router.post('/createLianqifang', async (ctx, next) => {
                 let amount = ctx.request.body.amount;
                 amount = amount?amount:1;
 
-                if (+targetUser.strongstoneclip >= (amount * 10)) {
-                    targetUser.strongstonenum = +targetUser.strongstonenum + amount;
-                    targetUser.strongstoneclip = +targetUser.strongstoneclip - amount * 10;
+                if (+targetUser.strongstoneclip >= (+amount * 10)) {
+                    targetUser.strongstonenum = +targetUser.strongstonenum + +amount;
+                    targetUser.strongstoneclip = +targetUser.strongstoneclip - +amount * 10;
                     await targetUser.save();
                     ctx.response.body = {
                         code: 200,
