@@ -33,6 +33,7 @@ router.get('/getEquipList', async (ctx, next) => {
             type: ctx.query.equipmentType,
             ison: 0
         },
+        limit:15,
         order:[
             ['level','DESC'],
             ['class','DESC']
@@ -103,8 +104,6 @@ router.post('/equipUser', async (ctx, next) => {
 
 });
 
-
-
 router.post('/deleteEquipment', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
         return;
@@ -149,16 +148,19 @@ router.post('/destoryEquip', async (ctx, next) => {
         }
     });
 
-    targetUser.tiekuang = +targetUser.tiekuang + (+originEquip.class * 300);
-    targetUser.caoyao = +targetUser.caoyao + (+originEquip.class * 300);
-    targetUser.liangshi = +targetUser.liangshi + (+originEquip.class * 300);
-    targetUser.woods = +targetUser.woods + (+originEquip.class * 300);
+    if(originEquip){
+        targetUser.tiekuang = +targetUser.tiekuang + (+originEquip.class * 300);
+        targetUser.caoyao = +targetUser.caoyao + (+originEquip.class * 300);
+        targetUser.liangshi = +targetUser.liangshi + (+originEquip.class * 300);
+        targetUser.woods = +targetUser.woods + (+originEquip.class * 300);
 
-    await originEquip.destroy();
+        await originEquip.destroy();
+    }
+
     await targetUser.save();
     ctx.response.body = {
         code: 200,
-        message: '成功'
+        message: '分解获得四类资源各'+(+originEquip.class * 300)
     };
 
 });
