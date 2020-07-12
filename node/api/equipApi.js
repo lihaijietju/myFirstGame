@@ -156,7 +156,7 @@ router.post('/destoryEquip', async (ctx, next) => {
     await targetUser.save();
     ctx.response.body = {
         code: 200,
-        message: '分解共获得装备碎片'+ originEquip.class
+        message: '分解共获得碎片'+ originEquip.class
     };
 
 });
@@ -201,7 +201,7 @@ router.post('/batchDestoryEquip', async (ctx, next) => {
     await targetUser.save();
     ctx.response.body = {
         code: 200,
-        message: '分解共获得装备碎片'+ (count*ctx.request.body.class)
+        message: '分解共获得碎片'+ (count*ctx.request.body.class)
     };
 
 });
