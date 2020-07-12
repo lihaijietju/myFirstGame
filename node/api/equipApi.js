@@ -262,9 +262,30 @@ router.post('/createEquipment', async (ctx, next) => {
             message: '成功'
         };
     }
+});
 
+router.post('/createNewEquipment', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
+    ctx.log.info();
 
+    await next();
 
+    let targetUser = await Game_user.findOne({
+        where:{
+            account:ctx.request.body.account
+        }
+    })
+
+    targetUser.newequiptimes = +targetUser.newequiptimes -1;
+
+    await targetUser.save();
+    await Game_equip.create(ctx.request.body);
+    ctx.response.body = {
+        code: 200,
+        message: '成功'
+    };
 });
 
 router.post('/batchCreateEquip', async (ctx, next) => {

@@ -48,7 +48,8 @@ let Game_user = sequelize.define('game_user', {
     signFlag: Sequelize.INTEGER,
     shilianFlag: Sequelize.INTEGER,
     isdanger:Sequelize.INTEGER,
-    updatetime: Sequelize.STRING(45)
+    updatetime: Sequelize.STRING(45),
+    newequiptimes: Sequelize.INTEGER,
 }, {
     timestamps: false
 });

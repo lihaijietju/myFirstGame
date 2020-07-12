@@ -76,7 +76,8 @@ router.get('/getUserInfo', async (ctx, next) => {
             editnamecard: 1,
             battle: 1560,
             isdanger: 0,
-            updatetime: Date.now()
+            updatetime: Date.now(),
+            newequiptimes:5
         };
         await Game_user.create(params);
 

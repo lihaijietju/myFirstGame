@@ -165,9 +165,9 @@ router.post('/upClassEquipment', async (ctx, next) => {
 
 // 获取玩家属性,较慢待优化
 router.get('/getUserPropertyInfo', async (ctx, next) => {
-    // if (ctx.headers.token !== utility.md5(ctx.query.account)) {
-    //     return;
-    // }
+    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
+        return;
+    }
 
     ctx.log.info();
 
@@ -223,13 +223,16 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
         }
     });
 
-    // 自身属性
-    propertyInfo.strength = +propertyInfo.strength + +targetUser.strength;
-    propertyInfo.tizhi = +propertyInfo.tizhi + +targetUser.tizhi;
-    propertyInfo.gengu = +propertyInfo.gengu + +targetUser.gengu;
-    propertyInfo.speed = +propertyInfo.speed + +targetUser.speed;
-    propertyInfo.baoji = +propertyInfo.baoji + +targetUser.baoji;
+    if(!targetUser){
+        targetUser ={};
+    }
 
+    // 自身属性
+    propertyInfo.strength = +propertyInfo.strength + +(targetUser.strength ||0);
+    propertyInfo.tizhi = +propertyInfo.tizhi + +(targetUser.tizhi||0);
+    propertyInfo.gengu = +propertyInfo.gengu + +(targetUser.gengu||0);
+    propertyInfo.speed = +propertyInfo.speed + +(targetUser.speed||0);
+    propertyInfo.baoji = +propertyInfo.baoji + +(targetUser.baoji || 0);
 
     // 等级新增属性
     let property = 0;

@@ -124,9 +124,7 @@ scheduleInitUserFlag();
 async function getUserList() {
     let userList = await Game_user.findAll();
     for (let i = 0; i < userList.length; i++) {
-        if(userList[i].account === '111'){
-            updateBattleValue(userList[i].account);
-        }
+        updateBattleValue(userList[i].account);
     }
 }
 
@@ -235,5 +233,6 @@ async function initUserDailyFlag(account) {
     });
     targetUser.shilianFlag = 0;
     targetUser.signFlag = 0;
+    targetUser.newequiptimes = 5;
     await targetUser.save();
 }
