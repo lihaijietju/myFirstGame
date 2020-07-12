@@ -181,12 +181,15 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
         'baoji': 0
     }
 
+    let time1 = Date.now();
+
     let targetEquipment = await Game_equipment.findAll({
         where: {
             belongs: ctx.query.account
         },
         limit:4
     });
+    console.log(Date.now()-time1,2);
     // 获取法宝属性
     targetEquipment.forEach((equipment) => {
         propertyInfo.strength = +propertyInfo.strength + +equipment.strength;
@@ -226,6 +229,7 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
     propertyInfo.speed = +propertyInfo.speed + +targetUser.speed;
     propertyInfo.baoji = +propertyInfo.baoji + +targetUser.baoji;
 
+    console.log(Date.now()-time1,3);
 
     // 等级新增属性
     let property = 0;
@@ -247,6 +251,7 @@ router.get('/getUserPropertyInfo', async (ctx, next) => {
         },
         limit:5
     });
+
     for(var j=0;j<targetEquip.length;j++){
         if(+targetEquip[j].type===1){
             propertyInfo.strength = propertyInfo.strength + (+targetEquip[j].property);
