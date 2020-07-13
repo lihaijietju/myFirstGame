@@ -50,6 +50,8 @@ let Game_user = sequelize.define('game_user', {
     isdanger:Sequelize.INTEGER,
     updatetime: Sequelize.STRING(45),
     newequiptimes: Sequelize.INTEGER,
+    monthcardflag: Sequelize.INTEGER,
+    monthcarddays: Sequelize.INTEGER
 }, {
     timestamps: false
 });

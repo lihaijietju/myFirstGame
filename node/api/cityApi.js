@@ -238,14 +238,29 @@ router.get('/getOfflineResource', async (ctx, next) => {
 
     } else {
         // 查到用户进行数据更新
-        let updateTimes = (parseInt((Date.now() - targetUser.updatetime) / 1000 / 6)) || 0;
-        // 超过6个小时之内获取六个小时的资源
-        if(updateTimes > 3600){
-            updateTimes = 3600;
+        let updateTimes = 0;
+        // 离线多少分钟
+        let minute = 0;
+
+        // 月卡生效中
+        if(+targetUser.monthcarddays > 0){
+            updateTimes = (parseInt((Date.now() - targetUser.updatetime) / 1000 / 5.5)) || 0;
+            if(updateTimes > 5236){
+                updateTimes = 5236;
+            }
+            minute = parseInt(+updateTimes*5.5/60);
+
+        }else{
+            updateTimes = (parseInt((Date.now() - targetUser.updatetime) / 1000 / 6)) || 0;
+            // 超过6个小时之内获取六个小时的资源
+            if(updateTimes > 3600){
+                updateTimes = 3600;
+            }
+            minute = parseInt(+updateTimes*6/60);
         }
 
         let params ={
-            minute: parseInt(updateTimes * 6 / 60),
+            minute: minute,
             updateTimes: updateTimes,
             tiekuang:resourceuplevel[+targetUser.tiekuangrate-1].rate * (updateTimes || 0),
             liangshi:resourceuplevel[+targetUser.liangshirate-1].rate * (updateTimes || 0),

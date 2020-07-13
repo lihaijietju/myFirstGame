@@ -299,6 +299,12 @@ router.post('/createNewBusiness', async (ctx, next) => {
     await next();
     ctx.request.body.ids = ctx.request.body.ids.split(',');
 
+    let targetUser = await Game_user.findOne({
+        where:{
+            account:ctx.request.body.account
+        }
+    });
+
     for (let i = 0; i < ctx.request.body.ids.length; i++) {
         let targetTransport = await Game_trsnsporter.findOne({
             where: {
@@ -307,7 +313,11 @@ router.post('/createNewBusiness', async (ctx, next) => {
             }
         });
         targetTransport.starttime = +new Date();
-        targetTransport.totaltime = 60 * 60;
+        if(+targetUser.monthcarddays > 0){
+            targetTransport.totaltime = 3 * 60 * 60;
+        }else{
+            targetTransport.totaltime = 60 * 60;
+        }
         targetTransport.targetcity = ctx.request.body.targetCity;
         targetTransport.isBusy = 1;
         await targetTransport.save();
@@ -346,6 +356,10 @@ router.post('/finishBusiness', async (ctx, next) => {
             }
         });
 
+        // 月卡玩家三倍
+        if(+targetUser.monthcarddays > 0){
+            gold = 3 * gold;
+        }
         targetUser.gold = +targetUser.gold + gold;
 
         targetTransport.starttime = 0;
@@ -388,6 +402,12 @@ router.post('/onceCreateBusiness', async (ctx, next) => {
         }
     });
 
+    let targetUser = await Game_user.findOne({
+        where:{
+            account:ctx.request.body.account
+        }
+    });
+
     let targetList =[];
     for(var i=0;i<transportList.length;i++){
         let obj = {
@@ -403,6 +423,9 @@ router.post('/onceCreateBusiness', async (ctx, next) => {
             isbuiedmoney: transportList[i].isbuiedmoney,
             id: transportList[i].id
         };
+        if(+targetUser.monthcarddays > 0){
+            obj.totaltime = 3 * 60 * 60;
+        }
         targetList.push(obj);
     }
     await Game_trsnsporter.bulkCreate(targetList,{updateOnDuplicate:['isBusy','starttime','totaltime']});
@@ -452,6 +475,9 @@ router.post('/onceFinishBusiness', async (ctx, next) => {
             };
             targetTransList.push(obj);
 
+            if(+targetUser.monthcarddays > 0){
+                gold = 3 * gold;
+            }
             totalGold = totalGold + gold;
         }
     }

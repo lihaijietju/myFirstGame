@@ -22,10 +22,18 @@ router.post('/changeName', async (ctx, next) => {
             account: ctx.request.body.account,
         }
     });
+    if(ctx.request.body.newName.length > 6){
+        ctx.response.body = {
+            code: 400,
+            message: '名字必须小于等于6位'
+        };
+        return;
+    }
+
     if (targetUser.editnamecard <= 0) {
         ctx.response.body = {
             code: 400,
-            message: '失败'
+            message: '改名卡数量不足'
         };
     } else {
         targetUser.editnamecard = targetUser.editnamecard - 1;
@@ -33,7 +41,7 @@ router.post('/changeName', async (ctx, next) => {
         await targetUser.save();
         ctx.response.body = {
             code: 200,
-            message: '成功'
+            message: '修改成功'
         };
     }
 });

@@ -640,4 +640,66 @@ router.post('/buyThingsByMoney', async (ctx, next) => {
 });
 
 
+// 获取用户原始数据
+router.get('/getSimpleUserInfo', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
+
+    ctx.log.info();
+
+    await next();
+    // 查询数据
+    let targetUser = await Game_user.findOne({
+        account:ctx.query.account
+    })
+
+    ctx.response.body = {
+        code: 200,
+        message: '成功',
+        data: targetUser
+    };
+});
+
+// 领取月卡内容
+router.get('/getYuekaResource', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+        return;
+    }
+
+    ctx.log.info();
+
+    await next();
+    // 查询数据
+    let targetUser = await Game_user.findOne({
+        account:ctx.query.account
+    });
+
+    if(+targetUser.monthcardflag === 1){
+        ctx.response.body = {
+            code: 400,
+            message: '您今日的月卡资源已经领取'
+        };
+        return;
+    }
+    if(+targetUser.monthcarddays <= 0){
+        ctx.response.body = {
+            code: 400,
+            message: '您今日的月卡已经到期，需要重新购买'
+        };
+        return;
+    }
+
+    targetUser.gold = +targetUser.gold + 5000;
+    targetUser.gemstone = +targetUser.gemstone + 80;
+    targetUser.monthcarddays = +targetUser.monthcarddays - 1;
+    targetUser.monthcardflag = 1;
+    await targetUser.save();
+    ctx.response.body = {
+        code: 200,
+        message: '领取5000金币,80钻石成功'
+    };
+});
+
+
 module.exports = router;

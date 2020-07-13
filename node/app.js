@@ -233,6 +233,11 @@ async function initUserDailyFlag(account) {
     });
     targetUser.shilianFlag = 0;
     targetUser.signFlag = 0;
-    targetUser.newequiptimes = 5;
+    targetUser.monthcardflag = 0;
+    if(+targetUser.monthcarddays > 0){
+        targetUser.newequiptimes = 7;
+    } else {
+        targetUser.newequiptimes = 5;
+    }
     await targetUser.save();
 }

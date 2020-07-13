@@ -209,6 +209,12 @@ router.post('/createNewBattle', async (ctx, next) => {
     ctx.log.info();
 
     await next();
+
+    let targetUser = await Game_user.findOne({
+        where:{
+            account:ctx.request.body.account
+        }
+    });
     // 查询数据
     ctx.request.body.ids = ctx.request.body.ids.split(',');
 
@@ -220,11 +226,14 @@ router.post('/createNewBattle', async (ctx, next) => {
             }
         });
         targetBattle.starttime = +new Date();
-        targetBattle.totaltime = 3 * 60 * 60;
+        if(+targetUser.monthcarddays > 0){
+            targetBattle.totaltime = 6 * 60 * 60;
+        }else{
+            targetBattle.totaltime = 3 * 60 * 60;
+        }
         targetBattle.isbusy = 1;
         await targetBattle.save();
     }
-
 
     ctx.response.body = {
         code: 200,
@@ -248,6 +257,12 @@ router.post('/onceCreateBattle', async (ctx, next) => {
         }
     });
 
+    let targetUser = await Game_user.findOne({
+        where:{
+            account:ctx.request.body.account
+        }
+    });
+
     let targetList =[];
     for(var i=0;i<battleList.length;i++){
         let obj = {
@@ -263,6 +278,11 @@ router.post('/onceCreateBattle', async (ctx, next) => {
             isbuiedmoney: battleList[i].isbuiedmoney,
             id: battleList[i].id
         };
+        if(+targetUser.monthcarddays > 0){
+            targetBattle.totaltime = 6 * 60 * 60;
+        }else{
+            targetBattle.totaltime = 3 * 60 * 60;
+        }
         targetList.push(obj);
     }
     await Game_battlewar.bulkCreate(targetList,{updateOnDuplicate:['isbusy','starttime','totaltime']});
@@ -320,6 +340,10 @@ router.post('/onceFinishBattle', async (ctx, next) => {
         }
     });
 
+    if(+targetUser.monthcarddays > 0){
+        totalgemstone = 2 * +totalgemstone;
+    }
+
     targetUser.gemstone = +targetUser.gemstone + totalgemstone;
 
     await targetUser.save();
@@ -360,7 +384,9 @@ router.post('/finishBattle', async (ctx, next) => {
             }
         });
 
-        console.log()
+        if(+targetUser.monthcarddays > 0){
+            money = 2 * +money;
+        }
 
         targetUser.gemstone = +targetUser.gemstone + money;
 
