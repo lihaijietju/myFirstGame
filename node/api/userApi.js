@@ -642,7 +642,7 @@ router.post('/buyThingsByMoney', async (ctx, next) => {
 
 // 获取用户原始数据
 router.get('/getSimpleUserInfo', async (ctx, next) => {
-    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
         return;
     }
 
@@ -651,7 +651,9 @@ router.get('/getSimpleUserInfo', async (ctx, next) => {
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
-        account:ctx.query.account
+        where:{
+            account:ctx.query.account
+        }
     })
 
     ctx.response.body = {
@@ -663,7 +665,7 @@ router.get('/getSimpleUserInfo', async (ctx, next) => {
 
 // 领取月卡内容
 router.get('/getYuekaResource', async (ctx, next) => {
-    if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {
+    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
         return;
     }
 
@@ -672,7 +674,9 @@ router.get('/getYuekaResource', async (ctx, next) => {
     await next();
     // 查询数据
     let targetUser = await Game_user.findOne({
-        account:ctx.query.account
+        where:{
+            account:ctx.query.account
+        }
     });
 
     if(+targetUser.monthcardflag === 1){

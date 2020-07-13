@@ -279,9 +279,9 @@ router.post('/onceCreateBattle', async (ctx, next) => {
             id: battleList[i].id
         };
         if(+targetUser.monthcarddays > 0){
-            targetBattle.totaltime = 6 * 60 * 60;
+            battleList[i].totaltime = 6 * 60 * 60;
         }else{
-            targetBattle.totaltime = 3 * 60 * 60;
+            battleList[i].totaltime = 3 * 60 * 60;
         }
         targetList.push(obj);
     }

@@ -22,10 +22,10 @@ router.post('/changeName', async (ctx, next) => {
             account: ctx.request.body.account,
         }
     });
-    if(ctx.request.body.newName.length > 6){
+    if(ctx.request.body.newName.length > 5){
         ctx.response.body = {
             code: 400,
-            message: '名字必须小于等于6位'
+            message: '名字必须小于等于5位'
         };
         return;
     }

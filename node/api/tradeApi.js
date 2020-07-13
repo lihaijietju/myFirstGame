@@ -296,6 +296,8 @@ router.post('/createNewBusiness', async (ctx, next) => {
     }
     ctx.log.info();
 
+    console.log(11111);
+
     await next();
     ctx.request.body.ids = ctx.request.body.ids.split(',');
 
@@ -379,10 +381,6 @@ router.post('/finishBusiness', async (ctx, next) => {
             message: '失败'
         };
     }
-
-
-
-
 });
 
 
@@ -454,6 +452,12 @@ router.post('/onceFinishBusiness', async (ctx, next) => {
         }
     });
 
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: ctx.request.body.account
+        }
+    });
+
     let targetTransList = [];
     for(var i=0; i<transportList.length;i++){
         let resttime = transportList[i].totaltime - parseInt((+new Date() - transportList[i].starttime) / 1000);
@@ -481,12 +485,6 @@ router.post('/onceFinishBusiness', async (ctx, next) => {
             totalGold = totalGold + gold;
         }
     }
-
-    let targetUser = await Game_user.findOne({
-        where: {
-            account: ctx.request.body.account
-        }
-    });
 
     targetUser.gold = +targetUser.gold + totalGold;
 
