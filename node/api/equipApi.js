@@ -278,14 +278,23 @@ router.post('/createNewEquipment', async (ctx, next) => {
         }
     })
 
-    targetUser.newequiptimes = +targetUser.newequiptimes -1;
+    if(+targetUser.newequiptimes > 0){
+        targetUser.newequiptimes = +targetUser.newequiptimes -1;
+        await targetUser.save();
+        await Game_equip.create(ctx.request.body);
+        ctx.response.body = {
+            code: 200,
+            message: '成功'
+        };
+    }else{
+        ctx.response.body = {
+            code: 400,
+            message: '您今天的副本次数已满'
+        };
+    }
 
-    await targetUser.save();
-    await Game_equip.create(ctx.request.body);
-    ctx.response.body = {
-        code: 200,
-        message: '成功'
-    };
+
+
 });
 
 router.post('/batchCreateEquip', async (ctx, next) => {

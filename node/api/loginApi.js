@@ -190,7 +190,7 @@ router.get('/sendAllGemstone', async (ctx, next) => {
 
     let targetUserList = await Game_user.findAll();
     for(let i =0;i<targetUserList.length;i++){
-        targetUserList[i].gemstone = targetUserList[i].gemstone + 1000;
+        targetUserList[i].editnamecard = +targetUserList[i].editnamecard + 1;
         await targetUserList[i].save();
     }
 
