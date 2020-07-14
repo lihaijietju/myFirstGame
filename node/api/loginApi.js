@@ -212,6 +212,7 @@ router.get('/createYueka', async (ctx, next) => {
 
     targetUser.gemstone = +targetUser.gemstone +200;
     targetUser.monthcarddays = targetUser.monthcarddays + 30;
+    targetUser.newequiptimes = +targetUser.newequiptimes + 2;
 
     await targetUser.save();
 
