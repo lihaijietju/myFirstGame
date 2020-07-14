@@ -7,6 +7,7 @@ const Game_trsnsporter = require('../model/Game_trsnsporter');
 const utility = require("utility");
 const Game_equip = require('../model/Game_equip');
 
+const Game_task = require('../model/Game_task');
 
 //loading页面
 router.get('/connectServer', async (ctx, next) => {
@@ -215,6 +216,54 @@ router.get('/createYueka', async (ctx, next) => {
     targetUser.newequiptimes = +targetUser.newequiptimes + 2;
 
     await targetUser.save();
+
+    ctx.response.body = {
+        message:'成功'
+    };
+});
+
+// 重置一下task表创建
+router.get('/createTaskData', async (ctx, next) => {
+    await next();
+    ctx.log.info();
+
+    let targetUserList = await Game_user.findAll();
+
+    let targetList=[];
+
+    for(let i=0;i<targetUserList.length;i++){
+        let obj ={
+            id: targetUserList[i].account,
+            account:targetUserList[i].account,
+            sign: 0,
+            signflag: 0,
+
+            tradego: 0,
+            tradegoflag: 0,
+
+            tradeback: 0,
+            tradebackflag: 0,
+
+            battlego: 0,
+            battlegoflag: 0,
+
+            battleback: 0,
+            battlebackflag: 0,
+
+            newequip: 0,
+            newequipflag: 0,
+
+            wujinshilian: 0,
+            wujinshilianflag: 0,
+        };
+        try{
+            await Game_task.create(obj);
+        }
+        catch(e){
+            continue;
+        }
+    }
+
 
     ctx.response.body = {
         message:'成功'

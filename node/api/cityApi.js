@@ -9,6 +9,9 @@ const Game_equip = require('../model/Game_equip');
 const utility = require("utility");
 const util = require('../util/util');
 
+const Game_task = require('../model/Game_task');
+
+
 const experience = require('../data/experience');
 const resourceuplevel = require('../data/resourceuplevel');
 
@@ -162,6 +165,36 @@ router.get('/getUserInfo', async (ctx, next) => {
             level: 1
         }];
         await Game_resource.bulkCreate(resourceParams);
+
+        let obj ={
+            id: ctx.query.account,
+            account:ctx.query.account,
+            sign: 0,
+            signflag: 0,
+
+            tradego: 0,
+            tradegoflag: 0,
+
+            tradeback: 0,
+            tradebackflag: 0,
+
+            battlego: 0,
+            battlegoflag: 0,
+
+            battleback: 0,
+            battlebackflag: 0,
+
+            newequip: 0,
+            newequipflag: 0,
+
+            wujinshilian: 0,
+            wujinshilianflag: 0,
+        };
+        try{
+            await Game_task.create(obj);
+        }
+        catch(e){
+        }
 
     } else {
         // 查到用户进行数据更新
