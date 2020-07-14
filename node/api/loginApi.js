@@ -199,5 +199,26 @@ router.get('/sendAllGemstone', async (ctx, next) => {
     };
 });
 
+// 开通月卡
+router.get('/createYueka', async (ctx, next) => {
+    await next();
+    ctx.log.info();
+
+    let targetUser = await Game_user.findOne({
+        where:{
+            account:ctx.query.account
+        }
+    });
+
+    targetUser.gemstone = +targetUser.gemstone +200;
+    targetUser.monthcarddays = targetUser.monthcarddays + 30;
+
+    await targetUser.save();
+
+    ctx.response.body = {
+        message:'成功'
+    };
+});
+
 
 module.exports = router;
