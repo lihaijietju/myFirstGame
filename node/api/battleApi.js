@@ -139,7 +139,13 @@ router.post('/addNewBattleWar', async (ctx, next) => {
     });
 
     if (ctx.request.body.money) {
-        if(targetUser.gemstone >= 1000){
+        let battleList = await Game_battlewar.findAll({
+            where:{
+                isbuiedmoney:1,
+                belongsto:ctx.request.body.account
+            }
+        })
+        if(targetUser.gemstone >= 1000 && battleList.length<5){
             targetUser.gemstone = +targetUser.gemstone - 1000;
             await targetUser.save();
 
@@ -161,10 +167,26 @@ router.post('/addNewBattleWar', async (ctx, next) => {
                 code: 200,
                 message: '成功'
             };
+        }else{
+            ctx.response.body = {
+                code: 400,
+                message: '当前战队数量已达最大值或者钻石数量不足'
+            };
         }
 
     } else {
-        if (+targetUser.caoyao >= 1000 && +targetUser.woods >= 1000 && +targetUser.tiekuang >= 1000 && +targetUser.liangshi >= 1000) {
+        let battleList = await Game_battlewar.findAll({
+            where:{
+                isbuiedmoney:0,
+                belongsto:ctx.request.body.account
+            }
+        })
+        let len = parseInt((+targetUser.level) / 10) + 1
+
+        if (+targetUser.caoyao >= 1000
+            && +targetUser.woods >= 1000
+            && +targetUser.tiekuang >= 1000
+            && +targetUser.liangshi >= 1000 && battleList.length < len) {
             targetUser.caoyao = +targetUser.caoyao - 1000;
             targetUser.woods = +targetUser.woods - 1000;
             targetUser.tiekuang = +targetUser.tiekuang - 1000;
