@@ -261,17 +261,17 @@ router.get('/getDailyTaskResource', async (ctx, next) => {
     });
     let str = '';
 
-    let randomNum = randomNum(1,3);
+    let randomNum1 = randomNum(1,3);
 
-    if(randomNum === 1){
+    if(randomNum1 === 1){
         targetUser.gemstone = +targetUser.gemstone + 5;
         str = '获取5个钻石';
     }
-    if(randomNum === 2){
+    if(randomNum1 === 2){
         targetUser.strongstoneclip = +targetUser.strongstoneclip + 50;
         str = '获取50个强化石碎片';
     }
-    if(randomNum === 3){
+    if(randomNum1 === 3){
         targetUser.gold = +targetUser.gold + 1000;
         str = '获取1000金币';
     }
