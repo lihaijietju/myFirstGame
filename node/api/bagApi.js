@@ -120,7 +120,7 @@ router.post('/getUpClassStone', async (ctx, next) => {
     if (+targetUser.upclassstoneclip < 10) {
         ctx.response.body = {
             code: 400,
-            message: '升阶石碎片不足'
+            message: '强化石碎片不足'
         };
     } else {
         targetUser.upclassstone = targetUser.upclassstone + 1;

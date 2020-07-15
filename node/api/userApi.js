@@ -323,7 +323,7 @@ router.post('/createLianqifang', async (ctx, next) => {
                 } else {
                     ctx.response.body = {
                         code: 500,
-                        message: '装备碎片不足'
+                        message: '强化石碎片不足'
                     };
                 }
             }
@@ -341,7 +341,7 @@ router.post('/createLianqifang', async (ctx, next) => {
             } else {
                 ctx.response.body = {
                     code: 500,
-                    message: '装备碎片不足'
+                    message: '强化石碎片不足'
                 };
             }
             break;
@@ -357,7 +357,7 @@ router.post('/createLianqifang', async (ctx, next) => {
             } else {
                 ctx.response.body = {
                     code: 500,
-                    message: '装备碎片不足'
+                    message: '强化石碎片不足'
                 };
             }
             break;
@@ -373,7 +373,7 @@ router.post('/createLianqifang', async (ctx, next) => {
             } else {
                 ctx.response.body = {
                     code: 500,
-                    message: '装备碎片不足'
+                    message: '强化石碎片不足'
                 };
             }
             break;
