@@ -3,6 +3,7 @@ const router = require('koa-router')();
 const Game_account = require('../model/Game_account1');
 const Game_user = require('../model/Game_user');
 const utility = require("utility");
+const Game_task = require('../model/Game_task');
 
 
 //loading页面
@@ -23,6 +24,15 @@ router.post('/signUpToday', async (ctx, next) => {
             message: '您今天已经签到过了'
         };
     } else {
+        let targetTask = await Game_task.findOne({
+            where:{
+                account:ctx.request.body.account
+            }
+        });
+
+        targetTask.sign = +targetTask.sign + 1;
+        await targetTask.save();
+
         let type = randomNum(1, 7);
         if (type === 1) {
             targetUser.gemstone = +targetUser.gemstone + 10;
@@ -134,6 +144,15 @@ router.post('/finishWujinshilian', async (ctx, next) => {
     targetUser.gold = +targetUser.gold + +ctx.request.body.gold;
     targetUser.strongstoneclip = +targetUser.strongstoneclip + +ctx.request.body.strongstoneclip;
 
+    let targetTask = await Game_task.findOne({
+        where:{
+            account:ctx.request.body.account
+        }
+    });
+
+    targetTask.wujinshilian = +targetTask.wujinshilian + 1;
+    await targetTask.save();
+
     await targetUser.save();
     ctx.response.body = {
         code: 200,
@@ -161,6 +180,134 @@ router.post('/reduceShilianFlag', async (ctx, next) => {
         message: '成功'
     };
 });
+
+
+// 获取任务数据
+router.get('/getTaskDetailByAccount', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
+        return;
+    }
+    ctx.log.info();
+
+    await next();
+    // 查询数据
+    let targetTask = await Game_task.findOne({
+        'where': {
+            account: ctx.query.account
+        }
+    });
+    if(!targetTask){
+        let obj ={
+            id: ctx.query.account,
+            account:ctx.query.account,
+            sign: 0,
+            signflag: 0,
+
+            tradego: 0,
+            tradegoflag: 0,
+
+            tradeback: 0,
+            tradebackflag: 0,
+
+            battlego: 0,
+            battlegoflag: 0,
+
+            battleback: 0,
+            battlebackflag: 0,
+
+            newequip: 0,
+            newequipflag: 0,
+
+            wujinshilian: 0,
+            wujinshilianflag: 0,
+        };
+        await Game_task.create(obj);
+    }
+
+    targetTask = await Game_task.findOne({
+        'where': {
+            account: ctx.query.account
+        }
+    });
+
+    ctx.response.body = {
+        code: 200,
+        message: '成功',
+        data: targetTask
+    };
+});
+
+// 领取每日任务奖励
+router.get('/getDailyTaskResource', async (ctx, next) => {
+    if (ctx.headers.token !== utility.md5(ctx.query.account)) {
+        return;
+    }
+    ctx.log.info();
+
+    // 类型1，2，3，4各奖励5钻石  5，6奖励50碎片，7奖励1000金币
+
+    await next();
+    // 查询数据
+    let targetUser = await Game_user.findOne({
+        where: {
+            account: ctx.query.account
+        }
+    });
+
+    let targetTask = await Game_task.findOne({
+        where:{
+            account:ctx.query.account
+        }
+    });
+    let str = '';
+
+    let randomNum = randomNum(1,3);
+
+    if(randomNum === 1){
+        targetUser.gemstone = +targetUser.gemstone + 5;
+        str = '获取5个钻石';
+    }
+    if(randomNum === 2){
+        targetUser.strongstoneclip = +targetUser.strongstoneclip + 50;
+        str = '获取50个强化石碎片';
+    }
+    if(randomNum === 3){
+        targetUser.gold = +targetUser.gold + 1000;
+        str = '获取1000金币';
+    }
+
+    if(+ctx.query.type ===1 && +targetTask.tradegoflag === 0){
+        targetTask.tradegoflag =1;
+    }
+    if(+ctx.query.type ===2 && +targetTask.tradebackflag === 0){
+        targetTask.tradebackflag =1;
+    }
+    if(+ctx.query.type ===3 && +targetTask.battlegoflag === 0){
+        targetTask.battlegoflag =1;
+    }
+    if(+ctx.query.type ===4 && +targetTask.battlebackflag === 0){
+        targetTask.battlebackflag =1;
+    }
+    if(+ctx.query.type ===5 && +targetTask.signflag === 0){
+        targetTask.signflag =1;
+    }
+    if(+ctx.query.type ===6 && +targetTask.wujinshilianflag === 0){
+        targetTask.wujinshilianflag =1;
+    }
+    if(+ctx.query.type ===7 && +targetTask.newequipflag === 0){
+        targetTask.newequipflag =1;
+    }
+
+    await targetTask.save();
+    await targetUser.save();
+
+    ctx.response.body = {
+        code: 200,
+        message: str
+    };
+});
+
+
 
 router.post('/sendMoneyToMe', async (ctx, next) => {
     if (ctx.headers.token !== utility.md5(ctx.request.body.account)) {

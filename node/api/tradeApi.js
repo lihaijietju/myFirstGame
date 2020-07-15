@@ -3,6 +3,7 @@ const router = require('koa-router')();
 const Game_account = require('../model/Game_account1');
 const Game_user = require('../model/Game_user');
 const Game_line = require('../model/Game_line');
+const Game_task = require('../model/Game_task');
 const Game_trsnsporter = require('../model/Game_trsnsporter');
 const utility = require("utility");
 const resourceuplevel = require('../data/resourceuplevel');
@@ -324,8 +325,6 @@ router.post('/createNewBusiness', async (ctx, next) => {
     }
     ctx.log.info();
 
-    console.log(11111);
-
     await next();
     ctx.request.body.ids = ctx.request.body.ids.split(',');
 
@@ -334,6 +333,13 @@ router.post('/createNewBusiness', async (ctx, next) => {
             account:ctx.request.body.account
         }
     });
+
+    let targetTask = await Game_task.findOne({
+        where:{
+            account:ctx.request.body.account
+        }
+    });
+
 
     for (let i = 0; i < ctx.request.body.ids.length; i++) {
         let targetTransport = await Game_trsnsporter.findOne({
@@ -352,6 +358,9 @@ router.post('/createNewBusiness', async (ctx, next) => {
         targetTransport.isBusy = 1;
         await targetTransport.save();
     }
+
+    targetTask.tradego = +targetTask.tradego + 1;
+    await targetTask.save();
 
     ctx.response.body = {
         code: 200,
@@ -386,6 +395,14 @@ router.post('/finishBusiness', async (ctx, next) => {
             }
         });
 
+        let targetTask = await Game_task.findOne({
+            where:{
+                account:ctx.request.body.account
+            }
+        });
+
+        targetTask.tradeback = +targetTask.tradeback + 1;
+
         // 月卡玩家三倍
         if(+targetUser.monthcarddays > 0){
             gold = 3 * gold;
@@ -397,6 +414,7 @@ router.post('/finishBusiness', async (ctx, next) => {
         targetTransport.isBusy = 0;
         await targetTransport.save();
         await targetUser.save();
+        await targetTask.save();
 
         ctx.response.body = {
             code: 200,
@@ -454,6 +472,17 @@ router.post('/onceCreateBusiness', async (ctx, next) => {
         }
         targetList.push(obj);
     }
+
+    let targetTask = await Game_task.findOne({
+        where:{
+            account:ctx.request.body.account
+        }
+    });
+
+    targetTask.tradego = +targetTask.tradego + targetList.length;
+
+    await targetTask.save();
+
     await Game_trsnsporter.bulkCreate(targetList,{updateOnDuplicate:['isBusy','starttime','totaltime']});
     ctx.response.body = {
         code: 200,
@@ -515,6 +544,15 @@ router.post('/onceFinishBusiness', async (ctx, next) => {
     }
 
     targetUser.gold = +targetUser.gold + totalGold;
+
+    let targetTask = await Game_task.findOne({
+        where:{
+            account:ctx.request.body.account
+        }
+    });
+
+    targetTask.tradeback = +targetTask.tradeback + targetTransList.length;
+    await targetTask.save();
 
     await targetUser.save();
     await Game_trsnsporter.bulkCreate(targetTransList,{updateOnDuplicate:['isBusy','starttime','totaltime']});

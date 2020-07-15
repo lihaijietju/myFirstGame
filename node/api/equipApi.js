@@ -4,6 +4,7 @@ const Game_account = require('../model/Game_account1');
 const Game_user = require('../model/Game_user');
 const Game_equip = require('../model/Game_equip');
 const utility = require("utility");
+const Game_task = require('../model/Game_task');
 
 /*
 type:
@@ -279,6 +280,16 @@ router.post('/createNewEquipment', async (ctx, next) => {
     })
 
     if(+targetUser.newequiptimes > 0){
+
+        let targetTask = await Game_task.findOne({
+            where:{
+                account:ctx.request.body.account
+            }
+        });
+
+        targetTask.newequip = +targetTask.newequip + 1;
+        await targetTask.save();
+
         targetUser.newequiptimes = +targetUser.newequiptimes -1;
         await targetUser.save();
         await Game_equip.create(ctx.request.body);

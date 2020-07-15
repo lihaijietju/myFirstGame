@@ -24,6 +24,8 @@ const equipApi = require('./api/equipApi');
 const Game_user = require('./model/Game_user');
 const Game_equipment = require('./model/Game_equipment');
 const Game_equip = require('./model/Game_equip');
+const Game_task = require('./model/Game_task');
+
 
 // 创建一个Koa对象表示web app本身:
 const app = new Koa();
@@ -231,6 +233,7 @@ async function initUserDailyFlag(account) {
             account: account
         }
     });
+
     targetUser.shilianFlag = 0;
     targetUser.signFlag = 0;
     targetUser.monthcardflag = 0;
@@ -240,4 +243,26 @@ async function initUserDailyFlag(account) {
         targetUser.newequiptimes = 5;
     }
     await targetUser.save();
+
+
+    let targetTask = await Game_task.findOne({
+        where: {
+            account: account
+        }
+    });
+    targetTask.sign = 0;
+    targetTask.signflag = 0;
+    targetTask.tradego = 0;
+    targetTask.tradegoflag = 0;
+    targetTask.tradeback = 0;
+    targetTask.tradebackflag = 0;
+    targetTask.battlego = 0;
+    targetTask.battlegoflag = 0;
+    targetTask.battleback = 0;
+    targetTask.battlebackflag = 0;
+    targetTask.wujinshilian = 0;
+    targetTask.wujinshilianflag = 0;
+    targetTask.newequip = 0;
+    targetTask.newequipflag = 0;
+    await targetTask.save();
 }

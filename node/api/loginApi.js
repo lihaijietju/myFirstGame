@@ -222,53 +222,5 @@ router.get('/createYueka', async (ctx, next) => {
     };
 });
 
-// 重置一下task表创建
-router.get('/createTaskData', async (ctx, next) => {
-    await next();
-    ctx.log.info();
-
-    let targetUserList = await Game_user.findAll();
-
-    let targetList=[];
-
-    for(let i=0;i<targetUserList.length;i++){
-        let obj ={
-            id: targetUserList[i].account,
-            account:targetUserList[i].account,
-            sign: 0,
-            signflag: 0,
-
-            tradego: 0,
-            tradegoflag: 0,
-
-            tradeback: 0,
-            tradebackflag: 0,
-
-            battlego: 0,
-            battlegoflag: 0,
-
-            battleback: 0,
-            battlebackflag: 0,
-
-            newequip: 0,
-            newequipflag: 0,
-
-            wujinshilian: 0,
-            wujinshilianflag: 0,
-        };
-        try{
-            await Game_task.create(obj);
-        }
-        catch(e){
-            continue;
-        }
-    }
-
-
-    ctx.response.body = {
-        message:'成功'
-    };
-});
-
 
 module.exports = router;

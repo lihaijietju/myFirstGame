@@ -7,6 +7,7 @@ const Game_trsnsporter = require('../model/Game_trsnsporter');
 const Game_battlewar = require('../model/Game_battlewar');
 const utility = require("utility");
 const resourceuplevel = require('../data/resourceuplevel');
+const Game_task = require('../model/Game_task');
 
 
 // 更新挂机副本
@@ -257,6 +258,15 @@ router.post('/createNewBattle', async (ctx, next) => {
         await targetBattle.save();
     }
 
+    let targetTask = await Game_task.findOne({
+        where:{
+            account:ctx.request.body.account
+        }
+    });
+
+    targetTask.battlego = +targetTask.battlego + 1;
+    await targetTask.save();
+
     ctx.response.body = {
         code: 200,
         message: '成功'
@@ -307,6 +317,16 @@ router.post('/onceCreateBattle', async (ctx, next) => {
         }
         targetList.push(obj);
     }
+
+    let targetTask = await Game_task.findOne({
+        where:{
+            account:ctx.request.body.account
+        }
+    });
+
+    targetTask.battlego = +targetTask.battlego + targetList.length;
+    await targetTask.save();
+
     await Game_battlewar.bulkCreate(targetList,{updateOnDuplicate:['isbusy','starttime','totaltime']});
 
     ctx.response.body = {
@@ -355,6 +375,15 @@ router.post('/onceFinishBattle', async (ctx, next) => {
             targetBattleList.push(obj);
         }
     }
+
+    let targetTask = await Game_task.findOne({
+        where:{
+            account:ctx.request.body.account
+        }
+    });
+
+    targetTask.battleback = +targetTask.battleback + targetBattleList.length;
+    await targetTask.save();
 
     let targetUser = await Game_user.findOne({
         where: {
@@ -405,6 +434,15 @@ router.post('/finishBattle', async (ctx, next) => {
                 account: ctx.request.body.account
             }
         });
+
+        let targetTask = await Game_task.findOne({
+            where:{
+                account:ctx.request.body.account
+            }
+        });
+
+        targetTask.battleback = +targetTask.battleback + 1;
+        await targetTask.save();
 
         if(+targetUser.monthcarddays > 0){
             money = 2 * +money;
